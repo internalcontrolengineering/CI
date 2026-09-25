@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Control Interno | Gestión de Riesgos y Excelencia Operativa</title>
+<title>Control Interno COMA | Gestión de Riesgos y Excelencia Operativa</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
@@ -11,16 +11,18 @@
     --dorado:#C9A227;
     --dorado-oscuro:#A67C1E;
     --dorado-claro:#E8D9A0;
-    --dorado-mate:#B8912A;
     --gris-oscuro:#1e1e1e;
     --gris-medio:#2d2d2d;
     --blanco:#ffffff;
     --gris-claro:#f4f4f4;
     --texto-gris:#555555;
     --borde:#e0e0e0;
+    --verde:#2e7d32;
+    --amarillo:#f9a825;
+    --rojo:#c62828;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
   body{
     font-family:'Montserrat',sans-serif;
     background:var(--blanco);
@@ -29,6 +31,8 @@
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
   }
+  img{max-width:100%;height:auto;display:block}
+  button{font-family:inherit}
   .wrap{max-width:1200px;margin:0 auto;padding:0 2rem;position:relative;z-index:2}
 
   /* ===== REVEAL ===== */
@@ -44,54 +48,65 @@
   /* ===== NAVBAR ===== */
   .navbar{
     position:sticky;top:0;z-index:1000;
-    background:var(--blanco);
+    background:rgba(255,255,255,.95);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
     box-shadow:0 2px 20px rgba(0,0,0,.06);
     transition:box-shadow .3s;
   }
   .navbar.scrolled{box-shadow:0 4px 30px rgba(0,0,0,.12)}
-  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 0;gap:24px}
-  .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:20px}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;cursor:pointer}
   .brand-mark{
     width:44px;height:44px;border-radius:50%;
     background:var(--dorado);
     display:grid;place-items:center;color:#fff;font-weight:800;font-size:1rem;
     box-shadow:0 8px 20px rgba(201,162,39,.35);
+    flex-shrink:0;
   }
   .brand-text strong{
     font-size:.95rem;letter-spacing:.16em;text-transform:uppercase;
     font-weight:900;color:var(--gris-oscuro);display:block;
   }
-  .nav-links{display:flex;gap:26px;list-style:none;flex-wrap:wrap}
-  .nav-links a{
-    color:var(--gris-oscuro);text-decoration:none;font-size:.78rem;font-weight:700;
-    letter-spacing:.1em;text-transform:uppercase;transition:color .2s;position:relative;
+  .brand-text small{
+    font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--texto-gris);font-weight:600;
   }
-  .nav-links a::after{
-    content:"";position:absolute;left:0;bottom:-4px;height:2px;width:0;
-    background:var(--dorado);transition:width .3s;
+  .nav-actions{display:flex;align-items:center;gap:14px}
+  .btn-inicio{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 20px;border-radius:50px;font-weight:800;font-size:.72rem;
+    letter-spacing:.14em;text-transform:uppercase;text-decoration:none;
+    background:var(--dorado);color:#fff;border:none;cursor:pointer;
+    box-shadow:0 8px 20px rgba(201,162,39,.35);transition:all .25s;
+    font-family:inherit;
+    white-space:nowrap;
   }
-  .nav-links a:hover{color:var(--dorado-oscuro)}
-  .nav-links a:hover::after{width:100%}
+  .btn-inicio:hover{background:var(--dorado-oscuro);transform:translateY(-2px);box-shadow:0 12px 26px rgba(201,162,39,.45)}
+  .btn-inicio.hidden{display:none}
+  .btn-inicio i{font-size:.85rem}
 
   /* ===== HERO ===== */
   .hero{
     background:var(--blanco);padding:70px 0 100px;position:relative;overflow:hidden;
+    transition:opacity .5s ease, transform .5s ease;
   }
+  .hero.hidden{display:none}
   .hero-inner{
-    display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;
+    display:grid;grid-template-columns:1.15fr 1fr;gap:4rem;align-items:center;
     position:relative;z-index:2;
   }
-  .hero-left{position:relative;z-index:3}
+  .hero-left{position:relative;z-index:3;min-height:340px;display:flex;flex-direction:column;justify-content:center}
   .hero-left .tag{
     display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.22em;
     text-transform:uppercase;color:var(--dorado-oscuro);margin-bottom:18px;
   }
   .hero-left h1{
-    font-size:clamp(2rem,3.8vw,3rem);line-height:1.1;font-weight:900;
+    font-size:clamp(1.9rem,3.5vw,2.8rem);line-height:1.12;font-weight:900;
     letter-spacing:-.03em;color:var(--gris-oscuro);margin-bottom:22px;
   }
   .hero-left h1 .dorado{color:var(--dorado-oscuro)}
-  .hero-left p{color:var(--texto-gris);font-size:1.05rem;margin-bottom:30px;max-width:95%}
+  .hero-left p{color:var(--texto-gris);font-size:1.02rem;margin-bottom:30px;max-width:95%}
   .hero-right{position:relative;display:flex;justify-content:center;align-items:center}
   .hero-circle{
     width:100%;max-width:440px;aspect-ratio:1/1;border-radius:50%;
@@ -109,28 +124,28 @@
     padding:16px 32px;border-radius:50px;font-weight:800;font-size:.78rem;
     letter-spacing:.14em;text-transform:uppercase;text-decoration:none;
     transition:all .25s;border:2px solid transparent;cursor:pointer;font-family:inherit;
+    white-space:nowrap;
   }
   .btn-dorado{background:var(--dorado);color:#fff;box-shadow:0 10px 26px rgba(201,162,39,.35)}
   .btn-dorado:hover{background:var(--dorado-oscuro);transform:translateY(-3px);box-shadow:0 16px 34px rgba(201,162,39,.45)}
-  .btn-outline-dorado{background:transparent;color:var(--dorado-oscuro);border-color:var(--dorado)}
-  .btn-outline-dorado:hover{background:var(--dorado);color:#fff;transform:translateY(-3px)}
   .btn-blanco{background:#fff;color:var(--dorado-oscuro);box-shadow:0 10px 26px rgba(0,0,0,.15)}
   .btn-blanco:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(0,0,0,.25)}
 
-  /* ===== HERO SLIDES (carrusel) ===== */
-  .hero-slide{display:none;animation:fadeSlide .7s ease}
+  /* ===== HERO SLIDES ===== */
+  .hero-slide{display:none;animation:fadeSlide .5s ease}
   .hero-slide.active{display:block}
-  @keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  .hero-dots{display:flex;gap:10px;margin-top:24px}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+  .hero-dots{display:flex;gap:8px;margin-top:24px;flex-wrap:wrap}
   .hero-dot{
-    width:12px;height:12px;border-radius:50%;border:none;cursor:pointer;
+    width:10px;height:10px;border-radius:50%;border:none;cursor:pointer;
     background:rgba(0,0,0,.15);transition:all .3s;padding:0;
   }
-  .hero-dot.active{background:var(--dorado);width:32px;border-radius:6px}
+  .hero-dot:hover{background:rgba(201,162,39,.5);transform:scale(1.2)}
+  .hero-dot.active{background:var(--dorado);width:26px;border-radius:5px}
 
   /* ===== SECCIONES ===== */
   section{padding:100px 0;position:relative}
-  .section-head{max-width:760px;margin:0 auto 60px;text-align:center}
+  .section-head{max-width:820px;margin:0 auto 60px;text-align:center}
   .section-tag{
     display:inline-block;font-size:.72rem;font-weight:800;letter-spacing:.24em;
     text-transform:uppercase;color:var(--dorado-oscuro);margin-bottom:14px;
@@ -143,13 +158,14 @@
   .divider{width:70px;height:4px;border-radius:2px;background:var(--dorado);margin:22px auto 0}
 
   /* ===== MÉTRICAS ===== */
-  .metrics{background:var(--gris-oscuro);color:#fff;padding:80px 0;position:relative;overflow:hidden}
+  .metrics{background:var(--gris-oscuro);color:#fff;padding:80px 0;position:relative;overflow:hidden;transition:opacity .5s ease}
+  .metrics.hidden{display:none}
   .metrics::before{
     content:"";position:absolute;right:-100px;top:-100px;width:400px;height:400px;
     border-radius:50%;background:var(--dorado);opacity:.12;
   }
   .metrics-grid{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:40px;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:40px;
     position:relative;z-index:2;text-align:center;
   }
   .metric-num{
@@ -192,7 +208,7 @@
   .feature-card p{font-size:.9rem;color:#ccc;margin-bottom:20px}
   .feature-link{
     font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--dorado);text-decoration:none;transition:all .2s;
+    color:var(--dorado);text-decoration:none;transition:all .2s;cursor:pointer;
   }
   .feature-card:hover .feature-link{color:#fff;letter-spacing:.24em}
 
@@ -204,7 +220,7 @@
   }
   .alt-media{display:flex;justify-content:center}
   .alt-avatar{
-    width:340px;height:340px;border-radius:50%;
+    width:100%;max-width:340px;aspect-ratio:1/1;border-radius:50%;
     background:var(--gris-claro);display:grid;place-items:center;
     color:var(--dorado-oscuro);font-size:5rem;font-weight:900;
     box-shadow:0 30px 60px rgba(0,0,0,.1);border:10px solid var(--dorado);
@@ -247,6 +263,8 @@
     color:var(--dorado-oscuro);margin-bottom:14px;
   }
   .tl-content p{font-size:.9rem;color:var(--texto-gris)}
+  .tl-content ul{font-size:.85rem;color:var(--texto-gris);margin-top:10px;padding-left:18px}
+  .tl-content ul li{margin-bottom:6px}
   .tl-dot{
     position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
     width:64px;height:64px;border-radius:50%;display:grid;place-items:center;
@@ -272,10 +290,11 @@
   }
   .network-media{display:flex;justify-content:center}
   .network-avatar{
-    width:300px;height:300px;border-radius:50%;
+    width:100%;max-width:300px;aspect-ratio:1/1;border-radius:50%;
     background:var(--dorado);display:grid;place-items:center;
-    color:#fff;font-size:3.5rem;font-weight:900;
+    color:#fff;font-size:2.6rem;font-weight:900;
     box-shadow:0 30px 60px rgba(201,162,39,.4);border:8px solid var(--gris-oscuro);
+    text-align:center;line-height:1.1;padding:1rem;
   }
   .network-content h2{
     font-size:clamp(1.6rem,2.8vw,2.1rem);font-weight:900;margin-bottom:20px;
@@ -292,6 +311,7 @@
   .coso-num{
     width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
     font-weight:900;font-size:1rem;color:#fff;background:var(--dorado);
+    flex-shrink:0;
   }
   .coso-list h3{font-size:.98rem;font-weight:800;color:#fff;margin-bottom:2px}
   .coso-list p{font-size:.85rem;color:#aaa;margin:0}
@@ -304,7 +324,7 @@
 
   /* ===== FRAUDE ===== */
   .invest{background:var(--blanco)}
-  .invest-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+  .invest-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
   .invest-item{
     display:grid;grid-template-columns:40px 1fr;gap:16px;align-items:start;
     background:var(--gris-claro);border:1px solid var(--borde);border-radius:12px;
@@ -319,6 +339,99 @@
   .invest-item:hover .invest-check{transform:scale(1.15) rotate(360deg)}
   .invest-item h3{font-size:.98rem;font-weight:800;color:var(--gris-oscuro);margin-bottom:6px}
   .invest-item p{font-size:.88rem;color:var(--texto-gris);margin:0}
+
+  /* ===== PROCESOS / ROLES ===== */
+  .roles{background:var(--blanco)}
+  .roles-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+  .role-card{
+    background:var(--blanco);border:1px solid var(--borde);border-radius:16px;
+    padding:32px 28px;box-shadow:0 8px 24px rgba(0,0,0,.05);transition:all .3s;
+    border-top:4px solid var(--dorado);
+  }
+  .role-card:hover{transform:translateY(-6px);box-shadow:0 20px 45px rgba(201,162,39,.15)}
+  .role-card .role-icon{
+    width:52px;height:52px;border-radius:12px;background:var(--dorado);color:#fff;
+    display:grid;place-items:center;font-size:1.3rem;margin-bottom:18px;
+  }
+  .role-card h3{font-size:1.1rem;font-weight:800;color:var(--gris-oscuro);margin-bottom:6px}
+  .role-card .role-sub{
+    font-size:.7rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--dorado-oscuro);margin-bottom:16px;
+  }
+  .role-card ul{list-style:none;padding:0;font-size:.88rem;color:var(--texto-gris)}
+  .role-card ul li{padding-left:22px;position:relative;margin-bottom:8px}
+  .role-card ul li::before{
+    content:"✓";position:absolute;left:0;color:var(--dorado);font-weight:900;
+  }
+
+  /* ===== BENEFICIOS ===== */
+  .benefits{background:var(--gris-claro)}
+  .benefits-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;
+  }
+  .benefit-card{
+    background:var(--blanco);border:1px solid var(--borde);border-radius:18px;
+    padding:40px 30px;text-align:center;transition:all .3s cubic-bezier(.22,1,.36,1);
+    border-top:4px solid var(--dorado);
+  }
+  .benefit-card:hover{
+    transform:translateY(-8px);box-shadow:0 24px 55px rgba(201,162,39,.18);
+    border-color:var(--dorado);
+  }
+  .benefit-icon{
+    width:72px;height:72px;border-radius:50%;margin:0 auto 22px;
+    display:grid;place-items:center;font-size:1.7rem;
+    background:var(--dorado);color:#fff;transition:all .3s;
+    box-shadow:0 12px 28px rgba(201,162,39,.3);
+  }
+  .benefit-card:hover .benefit-icon{transform:scale(1.1) rotate(-6deg)}
+  .benefit-card h3{font-size:1.15rem;font-weight:800;color:var(--gris-oscuro);margin-bottom:12px}
+  .benefit-card p{font-size:.92rem;color:var(--texto-gris)}
+
+  /* ===== ANTES VS DESPUÉS ===== */
+  .before-after{background:var(--blanco)}
+  .ba-grid{
+    display:grid;grid-template-columns:1fr auto 1fr;gap:32px;align-items:center;
+    max-width:1000px;margin:0 auto;
+  }
+  .ba-column{
+    border-radius:20px;padding:36px 32px;position:relative;overflow:hidden;
+    transition:transform .3s;
+  }
+  .ba-column:hover{transform:translateY(-6px)}
+  .ba-before{background:var(--gris-claro);border:1px solid var(--borde)}
+  .ba-before .ba-badge{background:var(--rojo);color:#fff}
+  .ba-before .ba-list li i{color:var(--rojo)}
+  .ba-after{
+    background:var(--gris-oscuro);border:1px solid var(--gris-oscuro);
+    box-shadow:0 20px 50px rgba(0,0,0,.15);
+  }
+  .ba-after .ba-badge{background:var(--dorado);color:#fff}
+  .ba-after .ba-list li i{color:var(--dorado)}
+  .ba-after .ba-header h3{color:#fff}
+  .ba-after .ba-list li{color:#ddd}
+  .ba-header{margin-bottom:24px}
+  .ba-badge{
+    display:inline-block;font-size:.68rem;font-weight:800;letter-spacing:.22em;
+    text-transform:uppercase;padding:6px 14px;border-radius:50px;margin-bottom:12px;
+  }
+  .ba-header h3{font-size:1.2rem;font-weight:800;color:var(--gris-oscuro)}
+  .ba-list{list-style:none;padding:0;margin:0}
+  .ba-list li{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:12px 0;font-size:.95rem;color:var(--texto-gris);
+    border-bottom:1px solid rgba(0,0,0,.06);
+  }
+  .ba-after .ba-list li{border-bottom:1px solid rgba(255,255,255,.08)}
+  .ba-list li:last-child{border-bottom:none}
+  .ba-list li i{font-size:1.1rem;flex-shrink:0;margin-top:2px}
+  .ba-arrow{
+    width:56px;height:56px;border-radius:50%;background:var(--dorado);
+    display:grid;place-items:center;color:#fff;font-size:1.3rem;
+    box-shadow:0 12px 30px rgba(201,162,39,.4);
+    transition:transform .3s;
+  }
+  .ba-arrow:hover{transform:scale(1.1)}
 
   /* ===== FAQ ===== */
   .faq-section{background:var(--gris-claro)}
@@ -366,6 +479,12 @@
     margin-bottom:20px;letter-spacing:-.02em;
   }
   .cta-content p{color:rgba(255,255,255,.9);font-size:1rem;margin-bottom:32px}
+  .cta-content ul{list-style:none;padding:0;margin-bottom:28px}
+  .cta-content ul li{
+    display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;
+    font-size:.92rem;color:rgba(255,255,255,.95);
+  }
+  .cta-content ul li::before{content:"✓";font-weight:900;color:#fff}
   .cta-form{
     background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
     border-radius:16px;padding:40px 36px;box-shadow:0 20px 50px rgba(0,0,0,.2);
@@ -409,73 +528,510 @@
     display:block;margin-bottom:8px;
   }
 
+  /* ===== TABS / PANELES ===== */
+  .tab-panel{
+    display:none;
+    opacity:0;
+    transform:translateY(20px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .tab-panel.active{
+    display:block;
+    animation:tabFadeIn .6s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  @keyframes tabFadeIn{
+    from{opacity:0;transform:translateY(30px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .tab-panel.closing{
+    display:block;
+    animation:tabFadeOut .35s ease forwards;
+  }
+  @keyframes tabFadeOut{
+    from{opacity:1;transform:translateY(0)}
+    to{opacity:0;transform:translateY(-15px)}
+  }
+
+  /* ===== SIDEBAR LATERAL DERECHO ===== */
+  .side-rail{
+    position:fixed;
+    right:0;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:1200;
+    display:flex;
+    align-items:center;
+    pointer-events:none;
+  }
+
+  .side-trigger{
+    position:fixed;
+    right:0;
+    top:0;
+    width:50px;
+    height:100vh;
+    z-index:1199;
+    pointer-events:auto;
+  }
+
+  .side-panel{
+    background:rgba(30,30,30,.96);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-radius:16px 0 0 16px;
+    box-shadow:-10px 0 40px rgba(0,0,0,.25);
+    padding:22px 18px 22px 22px;
+    min-width:250px;
+    max-width:280px;
+    transform:translateX(100%);
+    opacity:0;
+    transition:transform .45s cubic-bezier(.22,1,.36,1), opacity .35s ease;
+    pointer-events:auto;
+    border-left:3px solid var(--dorado);
+    max-height:85vh;
+    overflow-y:auto;
+  }
+  .side-panel.open{
+    transform:translateX(0);
+    opacity:1;
+  }
+  .side-panel-title{
+    color:var(--dorado);
+    font-size:.68rem;
+    font-weight:800;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    margin-bottom:14px;
+    padding-bottom:12px;
+    border-bottom:1px solid rgba(255,255,255,.1);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .side-panel-title i{font-size:.9rem}
+  .side-panel-list{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .side-panel-list button{
+    width:100%;
+    text-align:left;
+    background:transparent;
+    border:none;
+    color:#ccc;
+    font-family:inherit;
+    font-size:.82rem;
+    font-weight:600;
+    letter-spacing:.02em;
+    padding:10px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:all .22s ease;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    position:relative;
+  }
+  .side-panel-list button i{
+    font-size:.85rem;
+    color:var(--dorado);
+    width:18px;
+    text-align:center;
+    transition:transform .25s;
+    flex-shrink:0;
+  }
+  .side-panel-list button:hover{
+    background:rgba(201,162,39,.15);
+    color:#fff;
+    transform:translateX(-4px);
+  }
+  .side-panel-list button:hover i{transform:scale(1.15)}
+  .side-panel-list button.active{
+    background:var(--dorado);
+    color:#fff;
+  }
+  .side-panel-list button.active i{color:#fff}
+  .side-panel-list button.active::after{
+    content:"";
+    position:absolute;
+    right:8px;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#fff;
+  }
+
+  .side-hint{
+    position:fixed;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%) translateX(0);
+    z-index:1198;
+    background:var(--dorado);
+    color:#fff;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-size:.95rem;
+    box-shadow:0 8px 22px rgba(201,162,39,.5);
+    pointer-events:none;
+    opacity:1;
+    transition:opacity .3s ease, transform .3s ease;
+  }
+  .side-hint.hidden{
+    opacity:0;
+    transform:translateY(-50%) translateX(20px);
+  }
+
+  /* ============================================= */
+  /* RESPONSIVE — TABLET (max 1024px)              */
+  /* ============================================= */
+  @media(max-width:1024px){
+    .wrap{padding:0 1.5rem}
+    .hero-inner{gap:3rem}
+    .hero-left h1{font-size:clamp(1.7rem,3.2vw,2.4rem)}
+    .hero-circle{max-width:380px}
+    section{padding:80px 0}
+    .network-inner{gap:40px}
+    .network-avatar{max-width:240px;font-size:2.1rem}
+    .alt-avatar{max-width:280px;font-size:4rem}
+    .cta-inner{gap:40px}
+    .side-panel{min-width:220px;max-width:240px}
+  }
+
+  /* ============================================= */
+  /* RESPONSIVE — MOBILE GRANDE (max 900px)        */
+  /* ============================================= */
   @media(max-width:900px){
-    .nav-inner{flex-direction:column;gap:14px;padding:16px 0}
-    .nav-links{gap:16px;justify-content:center}
-    .hero-inner,.alt-inner,.network-inner,.cta-inner{grid-template-columns:1fr;gap:40px}
-    .hero{padding:50px 0 70px}
-    .hero-circle{max-width:280px}
-    .alt-avatar,.network-avatar{width:220px;height:220px;font-size:3rem}
-    section{padding:72px 0}
+    .wrap{padding:0 1.25rem}
+    .nav-inner{flex-direction:row;justify-content:space-between;padding:12px 0}
+    .brand-text small{display:none}
+    .brand-text strong{font-size:.85rem}
+    .hero{padding:40px 0 60px}
+    .hero-inner{grid-template-columns:1fr;gap:36px;text-align:left}
+    .hero-right{order:-1}
+    .hero-circle{max-width:240px;border-width:8px}
+    .hero-left{min-height:auto}
+    .hero-left h1{font-size:clamp(1.6rem,5vw,2.1rem);margin-bottom:18px}
+    .hero-left p{font-size:.98rem;margin-bottom:26px;max-width:100%}
+    .hero-left .tag{font-size:.62rem;margin-bottom:14px}
+    .hero-dots{margin-top:20px}
+    .circle-deco.dorado{width:90px !important;height:90px !important;top:-20px !important;right:-15px !important}
+    .circle-deco.gris{width:130px !important;height:130px !important;bottom:-30px !important;left:-30px !important}
+
+    .metrics{padding:56px 0}
+    .metrics-grid{grid-template-columns:repeat(2,1fr);gap:28px}
+    .metric-num{font-size:clamp(2rem,7vw,2.8rem)}
+    .metric-label{font-size:.68rem;letter-spacing:.12em}
+
+    section{padding:60px 0}
+    .section-head{margin-bottom:44px}
+    .section-head h2{font-size:clamp(1.4rem,5vw,1.85rem)}
+    .section-head p{font-size:.95rem}
+    .section-tag{font-size:.64rem;letter-spacing:.2em}
+
+    .features-grid,
+    .roles-grid,
+    .benefits-grid,
+    .invest-grid,
+    .faq-list{grid-template-columns:1fr}
+
+    .feature-card{padding:30px 22px}
+    .feature-card h3{font-size:1rem}
+    .feature-card p{font-size:.86rem}
+
+    .alt-inner,.network-inner,.cta-inner{grid-template-columns:1fr;gap:36px}
+    .alt-media{order:-1}
+    .alt-avatar{max-width:200px;font-size:3rem;border-width:8px}
+    .alt-card{padding:32px 26px}
+    .alt-card h2{font-size:clamp(1.35rem,5vw,1.7rem)}
+    .alt-card p{font-size:.92rem}
+
+    .network-media{order:-1}
+    .network-avatar{max-width:180px;font-size:1.6rem;border-width:6px}
+    .coso-list li{padding:16px 18px}
+    .coso-head{grid-template-columns:40px 1fr;gap:14px}
+    .coso-num{width:40px;height:40px;font-size:.9rem}
+    .coso-list h3{font-size:.9rem}
+    .coso-list p{font-size:.8rem}
+
+    .invest-item{padding:18px 18px;grid-template-columns:36px 1fr;gap:12px}
+    .invest-check{width:36px;height:36px;font-size:.9rem}
+
+    .role-card{padding:28px 22px}
+    .role-card h3{font-size:1rem}
+    .role-card ul{font-size:.85rem}
+
+    .benefit-card{padding:32px 24px}
+    .benefit-icon{width:60px;height:60px;font-size:1.4rem}
+    .benefit-card h3{font-size:1.05rem}
+    .benefit-card p{font-size:.88rem}
+
+    .ba-grid{grid-template-columns:1fr;gap:24px}
+    .ba-column{padding:28px 24px}
+    .ba-arrow{transform:rotate(90deg);margin:0 auto}
+    .ba-arrow:hover{transform:rotate(90deg) scale(1.1)}
+
     .timeline::before{left:30px}
-    .tl-item{grid-template-columns:1fr;gap:24px;padding-left:70px}
-    .tl-item:nth-child(odd) .tl-content,.tl-item:nth-child(even) .tl-content{grid-column:1;text-align:left}
-    .tl-dot{left:30px;top:0;transform:translate(-50%,0)}
+    .tl-item{grid-template-columns:1fr;gap:24px;padding-left:70px;margin-bottom:40px}
+    .tl-item:nth-child(odd) .tl-content,
+    .tl-item:nth-child(even) .tl-content{grid-column:1;text-align:left}
+    .tl-dot{left:30px;top:0;transform:translate(-50%,0);width:52px;height:52px;font-size:.95rem}
     .tl-item:hover .tl-dot{transform:translate(-50%,0) scale(1.1)}
+    .tl-content{padding:24px 22px}
+    .tl-content h3{font-size:1rem}
+
+    .faq-header{padding:20px 22px;font-size:.95rem}
+    .faq-body{padding:0 22px;font-size:.9rem}
+    .faq-item.active .faq-body{padding-bottom:22px}
+
+    .cta-content h2{font-size:clamp(1.35rem,5vw,1.75rem)}
+    .cta-content p{font-size:.95rem}
+    .cta-content ul li{font-size:.88rem}
+    .cta-form{padding:32px 24px}
+    .cta-form h3{font-size:.72rem}
+
+    .btn{padding:14px 26px;font-size:.72rem}
+    .btn-inicio{padding:9px 16px;font-size:.65rem}
+
+    footer{padding:32px 20px;font-size:.78rem}
+
+    .back-top{width:46px;height:46px;bottom:20px;right:20px;font-size:1.1rem}
+
+    /* Sidebar móvil: se abre con botón y se cierra al tocar fuera */
+    .side-trigger{width:36px}
+    .side-panel{
+      min-width:240px;
+      max-width:260px;
+      padding:20px 16px 20px 20px;
+      border-radius:14px 0 0 14px;
+    }
+    .side-panel-list button{font-size:.8rem;padding:10px 12px}
+    .side-hint{right:8px;width:34px;height:34px;font-size:.9rem}
+  }
+
+  /* ============================================= */
+  /* RESPONSIVE — MOBILE PEQUEÑO (max 600px)       */
+  /* ============================================= */
+  @media(max-width:600px){
+    .wrap{padding:0 1rem}
+    .brand-mark{width:38px;height:38px;font-size:.85rem}
+    .brand-text strong{font-size:.78rem;letter-spacing:.12em}
+    .btn-inicio{padding:8px 14px;font-size:.6rem;gap:6px}
+    .btn-inicio i{font-size:.75rem}
+
+    .hero{padding:30px 0 50px}
+    .hero-circle{max-width:200px;border-width:7px}
+    .hero-left h1{font-size:clamp(1.4rem,6vw,1.75rem);letter-spacing:-.02em}
+    .hero-left p{font-size:.9rem}
+    .hero-left .tag{font-size:.58rem}
+    .btn{padding:13px 22px;font-size:.68rem;letter-spacing:.1em}
+
+    .metrics{padding:44px 0}
+    .metrics-grid{grid-template-columns:1fr 1fr;gap:22px}
+    .metric-num{font-size:2rem}
+    .metric-label{font-size:.6rem;letter-spacing:.1em}
+
+    section{padding:50px 0}
+    .section-head{margin-bottom:36px}
+    .section-head h2{font-size:clamp(1.25rem,5.5vw,1.6rem)}
+    .section-head p{font-size:.88rem}
+    .section-tag{font-size:.58rem;letter-spacing:.16em}
+
+    .feature-card{padding:26px 18px}
+    .feature-icon{width:54px;height:54px;font-size:1.3rem}
+    .feature-card h3{font-size:.95rem}
+    .feature-card p{font-size:.82rem}
+
+    .alt-card{padding:26px 20px}
+    .alt-card h2{font-size:clamp(1.2rem,5.5vw,1.5rem)}
+    .alt-avatar{max-width:160px;font-size:2.4rem;border-width:6px}
+
+    .network-avatar{max-width:150px;font-size:1.3rem;border-width:5px}
+    .coso-list li{padding:14px 16px}
+    .coso-head{grid-template-columns:36px 1fr;gap:12px}
+    .coso-num{width:36px;height:36px;font-size:.82rem}
+    .coso-list h3{font-size:.85rem}
+    .coso-list p{font-size:.76rem}
+
+    .role-card{padding:24px 20px}
+    .role-icon{width:46px;height:46px;font-size:1.15rem}
+
+    .benefit-card{padding:28px 20px}
+    .benefit-icon{width:56px;height:56px;font-size:1.3rem}
+
+    .ba-column{padding:24px 20px}
+    .ba-header h3{font-size:1.05rem}
+    .ba-list li{font-size:.88rem;padding:10px 0}
+
+    .tl-item{padding-left:60px;margin-bottom:32px;gap:20px}
+    .timeline::before{left:24px;width:3px}
+    .tl-dot{left:24px;width:44px;height:44px;font-size:.82rem}
+    .tl-content{padding:20px 18px}
+    .tl-content h3{font-size:.95rem}
+    .tl-content p{font-size:.85rem}
+    .tl-content ul{font-size:.8rem}
+
+    .faq-header{padding:18px 18px;font-size:.88rem;gap:14px}
+    .faq-icon{width:30px;height:30px;font-size:1rem}
+    .faq-body{padding:0 18px;font-size:.85rem}
+    .faq-item.active .faq-body{padding-bottom:20px}
+
+    .cta-content h2{font-size:clamp(1.2rem,5.5vw,1.5rem)}
+    .cta-content p{font-size:.9rem}
+    .cta-content ul li{font-size:.84rem}
+    .cta-form{padding:26px 20px}
+    .cta-form h3{font-size:.68rem;margin-bottom:20px}
+    .form-group input,.form-group textarea{padding:12px 14px;font-size:.88rem}
+
+    .side-panel{
+      min-width:200px;
+      max-width:220px;
+      padding:18px 12px 18px 16px;
+      border-radius:12px 0 0 12px;
+    }
+    .side-panel-title{font-size:.6rem}
+    .side-panel-list button{font-size:.75rem;padding:9px 10px;gap:8px}
+    .side-panel-list button i{font-size:.78rem;width:16px}
+
+    .back-top{width:42px;height:42px;bottom:16px;right:16px;font-size:1rem}
+
+    footer{padding:28px 16px;font-size:.72rem}
+    footer p{font-size:.68rem}
+  }
+
+  /* ============================================= */
+  /* RESPONSIVE — MOBILE MUY PEQUEÑO (max 380px)   */
+  /* ============================================= */
+  @media(max-width:380px){
+    .hero-left h1{font-size:1.3rem}
+    .metric-num{font-size:1.75rem}
+    .btn{padding:12px 20px;font-size:.62rem}
+    .side-panel{min-width:180px;max-width:200px}
+  }
+
+  /* ============================================= */
+  /* PREFERENCIAS DE ACCESIBILIDAD                 */
+  /* ============================================= */
+  @media(prefers-reduced-motion:reduce){
+    *,
+    *::before,
+    *::after{
+      animation-duration:.01ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:.01ms !important;
+      scroll-behavior:auto !important;
+    }
   }
 </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
+<!-- ===== BARRA SUPERIOR ===== -->
 <nav class="navbar" id="navbar">
   <div class="wrap nav-inner">
-    <a href="#top" class="brand">
+    <a href="#" class="brand" id="brandHome">
       <div class="brand-mark">CI</div>
-      <div class="brand-text"><strong>Control Interno</strong></div>
+      <div class="brand-text">
+        <strong>Control Interno</strong>
+        <small>COMA · 2ª Línea de Defensa</small>
+      </div>
     </a>
-    <ul class="nav-links">
-      <li><a href="#proposito">Propósito</a></li>
-      <li><a href="#tres-lineas">Tres Líneas</a></li>
-      <li><a href="#coso">COSO</a></li>
-      <li><a href="#fraude">Fraude</a></li>
-      <li><a href="#faq">FAQ</a></li>
-      <li><a href="#contacto">Contacto</a></li>
-    </ul>
+    <div class="nav-actions">
+      <button class="btn-inicio hidden" id="btnInicio">
+        <i class="fas fa-home"></i> Inicio
+      </button>
+    </div>
   </div>
 </nav>
 
-<!-- HERO -->
-<header class="hero" id="top">
+<!-- ===== HERO (introducción) ===== -->
+<header class="hero" id="heroHome">
   <div class="wrap hero-inner">
     <div class="hero-left reveal-left">
+
+      <!-- Slide 1: Propósito -->
       <div class="hero-slide active">
-        <span class="tag">Segunda Línea de Defensa · IIA</span>
+        <span class="tag">Segunda Línea de Defensa · COMA</span>
         <h1>Estamos comprometidos con <span class="dorado">blindar la operación</span> para avanzar con certidumbre.</h1>
         <p>No somos un freno burocrático: somos el aliado estratégico que anticipa riesgos, previene fraudes y convierte el control en una ventaja operativa.</p>
-        <a href="#proposito" class="btn btn-dorado">Conoce nuestro rol</a>
+        <a href="#" data-tab-link="proposito" class="btn btn-dorado">Conoce nuestro rol</a>
       </div>
+
+      <!-- Slide 2: Fraude -->
       <div class="hero-slide">
         <span class="tag">Prevención · Anticorrupción</span>
         <h1>Cerramos las puertas al <span class="dorado">fraude</span> antes de que ocurra.</h1>
-        <p>Segregación de funciones, matrices de riesgo 5×5, canales de denuncia seguros y debida diligencia a proveedores.</p>
-        <a href="#fraude" class="btn btn-dorado">Ver prevención</a>
+        <p>Taxonomía de riesgos operacionales, segregación de funciones, Matriz de Riesgos y Controles (MaRC) y certificación de eventos de pérdida.</p>
+        <a href="#" data-tab-link="fraude" class="btn btn-dorado">Ver prevención</a>
       </div>
+
+      <!-- Slide 3: COSO -->
       <div class="hero-slide">
-        <span class="tag">Marco COSO · Mejora continua</span>
+        <span class="tag">COSO 2013 · COSO ERM 2017</span>
         <h1>Un sistema de control que <span class="dorado">se adapta y evoluciona</span> contigo.</h1>
-        <p>Los 5 componentes COSO integrados para conectar cultura, riesgo, control, información y monitoreo.</p>
-        <a href="#coso" class="btn btn-dorado">Explorar COSO</a>
+        <p>Los 5 componentes COSO y la gestión integral de riesgos para conectar cultura, riesgo, control, información y monitoreo.</p>
+        <a href="#" data-tab-link="coso" class="btn btn-dorado">Explorar COSO</a>
       </div>
+
+      <!-- Slide 4: Tres Líneas -->
+      <div class="hero-slide">
+        <span class="tag">Modelo IIA · Gobernanza</span>
+        <h1>Somos la <span class="dorado">Segunda Línea de Defensa</span>: supervisamos sin suplantar.</h1>
+        <p>Asesoramos, estandarizamos metodologías y monitoreamos riesgos. La operación gestiona; nosotros damos el marco y el criterio técnico.</p>
+        <a href="#" data-tab-link="tres-lineas" class="btn btn-dorado">Ver las 3 Líneas</a>
+      </div>
+
+      <!-- Slide 5: Procesos -->
+      <div class="hero-slide">
+        <span class="tag">Metodología · Mejora continua</span>
+        <h1>Metodología clara: <span class="dorado">tú documentas, nosotros te guiamos</span>.</h1>
+        <p>Damos marcos, plantillas y lineamientos para documentar procesos, riesgos y controles. Tú conoces la operación, nosotros el método.</p>
+        <a href="#" data-tab-link="procesos" class="btn btn-dorado">Ver procesos</a>
+      </div>
+
+      <!-- Slide 6: Beneficios -->
+      <div class="hero-slide">
+        <span class="tag">Lo que ganas con nosotros</span>
+        <h1>Operación blindada, <span class="dorado">decisiones más rápidas</span>, procesos más ágiles.</h1>
+        <p>No somos un trámite. Somos el equipo que te ayuda a operar con confianza, anticipar problemas y proteger lo que construyes.</p>
+        <a href="#" data-tab-link="beneficios" class="btn btn-dorado">Ver beneficios</a>
+      </div>
+
+      <!-- Slide 7: Transformación -->
+      <div class="hero-slide">
+        <span class="tag">La transformación</span>
+        <h1>De <span class="dorado">riesgos detectados tarde</span> a riesgos anticipados con KRIs.</h1>
+        <p>Así cambia tu operación cuando trabajas con Control Interno: flujos simplificados, prevención activa e información confiable.</p>
+        <a href="#" data-tab-link="antes-despues" class="btn btn-dorado">Ver transformación</a>
+      </div>
+
+      <!-- Slide 8: Contacto -->
+      <div class="hero-slide">
+        <span class="tag">Canales de atención</span>
+        <h1>¿Necesitas apoyo en <span class="dorado">riesgos, controles o documentación</span>?</h1>
+        <p>Acude con nosotros ante nuevos proyectos, actualización de matrices, prevención de fraudes o capacitación en cultura de control.</p>
+        <a href="#" data-tab-link="contacto" class="btn btn-dorado">Agenda una asesoría</a>
+      </div>
+
       <div class="hero-dots">
         <button class="hero-dot active" data-slide="0" aria-label="Slide 1"></button>
         <button class="hero-dot" data-slide="1" aria-label="Slide 2"></button>
         <button class="hero-dot" data-slide="2" aria-label="Slide 3"></button>
+        <button class="hero-dot" data-slide="3" aria-label="Slide 4"></button>
+        <button class="hero-dot" data-slide="4" aria-label="Slide 5"></button>
+        <button class="hero-dot" data-slide="5" aria-label="Slide 6"></button>
+        <button class="hero-dot" data-slide="6" aria-label="Slide 7"></button>
+        <button class="hero-dot" data-slide="7" aria-label="Slide 8"></button>
       </div>
     </div>
     <div class="hero-right reveal-right">
       <div class="hero-circle">
-        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Control Interno">
+        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Control Interno COMA">
       </div>
       <div class="circle-deco dorado" style="width:140px;height:140px;top:-30px;right:-30px;opacity:.9;"></div>
       <div class="circle-deco gris" style="width:200px;height:200px;bottom:-50px;left:-50px;opacity:.5;"></div>
@@ -483,14 +1039,10 @@
   </div>
 </header>
 
-<!-- MÉTRICAS -->
-<section class="metrics">
+<!-- ===== MÉTRICAS (introducción) ===== -->
+<section class="metrics" id="metricsHome">
   <div class="wrap">
     <div class="metrics-grid">
-      <div class="reveal">
-        <div class="metric-num" data-count="100" data-suffix="%">0%</div>
-        <div class="metric-label">Procesos evaluados</div>
-      </div>
       <div class="reveal">
         <div class="metric-num" data-count="5" data-suffix="">0</div>
         <div class="metric-label">Componentes COSO</div>
@@ -500,6 +1052,10 @@
         <div class="metric-label">Líneas de defensa</div>
       </div>
       <div class="reveal">
+        <div class="metric-num" data-count="6" data-suffix="">0</div>
+        <div class="metric-label">Procesos de Control Interno</div>
+      </div>
+      <div class="reveal">
         <div class="metric-num" data-count="0" data-suffix="">0</div>
         <div class="metric-label">Tolerancia al fraude</div>
       </div>
@@ -507,61 +1063,71 @@
   </div>
 </section>
 
-<!-- FEATURES -->
-<section id="proposito" class="features">
+<!-- ===== ANCLA DE TABS ===== -->
+<div class="tabs-anchor" id="tabsAnchor"></div>
+
+<!-- ============================================= -->
+<!-- TAB 1: PROPÓSITO -->
+<!-- ============================================= -->
+<section class="tab-panel features" data-tab="proposito">
   <div class="wrap">
     <div class="section-head reveal">
       <span class="section-tag">¿Qué hacemos por la organización?</span>
       <h2>Control que protege, simplifica y acelera</h2>
-      <p>Cuatro frentes de valor que impactan directamente en la seguridad, la eficiencia y la confianza institucional.</p>
+      <p>Nuestro propósito es establecer un marco integral para el Sistema de Control Interno que involucre a todo el personal en la consecución de los objetivos estratégicos, la protección de los activos, la confiabilidad de la información y una cultura de control sólida y ética.</p>
       <div class="divider"></div>
     </div>
     <div class="features-grid">
       <article class="feature-card reveal">
         <div class="feature-icon"><i class="fas fa-bullseye"></i></div>
         <h3>Anticipar riesgos</h3>
-        <p>Identificamos causas raíz y evaluamos riesgos de forma preventiva para priorizar donde el impacto es mayor.</p>
-        <a href="#tres-lineas" class="feature-link">Ver más →</a>
+        <p>Identificamos causas raíz y evaluamos riesgos inherentes y residuales con matrices 5×5 para priorizar donde el impacto es mayor.</p>
+        <a href="#" data-tab-link="procesos" class="feature-link">Ver más →</a>
       </article>
       <article class="feature-card reveal">
         <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
         <h3>Prevenir fraudes</h3>
-        <p>Blindamos procesos con segregación de funciones, candados inteligentes y protocolos claros.</p>
-        <a href="#fraude" class="feature-link">Ver más →</a>
+        <p>Blindamos procesos con taxonomía de riesgo operacional, segregación de funciones y protocolos claros de detección y respuesta.</p>
+        <a href="#" data-tab-link="fraude" class="feature-link">Ver más →</a>
       </article>
       <article class="feature-card reveal">
         <div class="feature-icon"><i class="fas fa-sync-alt"></i></div>
-        <h3>Mejora continua</h3>
-        <p>Revisamos flujos para eliminar duplicidades, simplificar retrabajos y hacer el trabajo más ágil.</p>
-        <a href="#coso" class="feature-link">Ver más →</a>
+        <h3>Metodología y mejora continua</h3>
+        <p>Damos marcos, plantillas y guías para documentar procesos, riesgos y controles. Revisamos flujos para eliminar duplicidades y retrabajos.</p>
+        <a href="#" data-tab-link="procesos" class="feature-link">Ver más →</a>
       </article>
       <article class="feature-card reveal">
         <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
         <h3>Información confiable</h3>
-        <p>Garantizamos que los datos operativos y financieros reflejen la realidad para decidir con confianza.</p>
-        <a href="#faq" class="feature-link">Ver más →</a>
+        <p>Garantizamos que los datos operativos y financieros reflejen la realidad con KPIs, KRIs y KCIs para decidir con confianza.</p>
+        <a href="#" data-tab-link="faq" class="feature-link">Ver más →</a>
       </article>
     </div>
   </div>
 </section>
 
-<!-- BLOQUE ALTERNO -->
-<section id="tres-lineas" class="alt-block">
+<!-- ============================================= -->
+<!-- TAB 2: TRES LÍNEAS -->
+<!-- ============================================= -->
+<section class="tab-panel alt-block" data-tab="tres-lineas">
   <div class="wrap alt-inner">
     <div class="alt-media reveal-left">
       <div class="alt-avatar">3L</div>
     </div>
     <div class="alt-card reveal-right">
-      <span class="section-tag" style="text-align:left;display:block">Modelo de las Tres Líneas</span>
-      <h2>Sé la mejor versión de tu área operativa</h2>
-      <p>Bajo el Modelo de las Tres Líneas del IIA, la Segunda Línea asesora, estandariza metodologías y supervisa sin suplantar al dueño operativo del riesgo.</p>
-      <a href="#coso" class="btn btn-dorado">Conocer el modelo</a>
+      <span class="section-tag" style="text-align:left;display:block">Modelo de las Tres Líneas · IIA</span>
+      <h2>Somos la Segunda Línea de Defensa</h2>
+      <p>Bajo el Modelo de las Tres Líneas, la Segunda Línea contribuye a evaluar y monitorear los riesgos, y establece el marco para la Gestión de los Riesgos. Proporcionamos supervisión especializada, políticas, estándares y procedimientos que guían la gestión de riesgos en toda la organización.</p>
+      <p>No suplantamos al dueño operativo del riesgo: lo acompañamos con metodología y criterio técnico.</p>
+      <a href="#" data-tab-link="coso" class="btn btn-dorado">Conocer el modelo</a>
     </div>
   </div>
 </section>
 
-<!-- TIMELINE -->
-<section class="experts">
+<!-- ============================================= -->
+<!-- TAB 3: EXPERTOS (TIMELINE) -->
+<!-- ============================================= -->
+<section class="tab-panel experts" data-tab="expertos">
   <div class="wrap">
     <div class="section-head reveal">
       <span class="section-tag">Modelo de las Tres Líneas · IIA</span>
@@ -572,25 +1138,41 @@
     <div class="timeline">
       <div class="tl-item reveal-left">
         <div class="tl-content">
-          <h3>Operación</h3>
+          <h3>Primera Línea (1LD)</h3>
           <div class="role">Dueña del riesgo y del control</div>
-          <p>Ejecuta las actividades diarias, diseña pasos de detalle y opera los controles directos.</p>
+          <p>Unidades de Negocio y Áreas de Soporte. Son propietarias de los riesgos y los gestionan. Implementan controles preventivos, detectivos y correctivos. Documentan sus procesos.</p>
+          <ul>
+            <li>Personal operativo y administrativo</li>
+            <li>Líderes/responsables de departamento</li>
+            <li>Directores/responsables de área</li>
+          </ul>
         </div>
         <div class="tl-dot">1L</div>
       </div>
       <div class="tl-item reveal-right">
         <div class="tl-content">
-          <h3>Control Interno</h3>
-          <div class="role">Facilitador y metodólogo</div>
-          <p>Estandariza metodologías de riesgo, asesora técnicamente, monitorea controles clave y fomenta la mejora.</p>
+          <h3>Segunda Línea (2LD)</h3>
+          <div class="role">Control Interno · Facilitador y metodólogo</div>
+          <p>Contribuye a evaluar y monitorear los riesgos. Establece el marco para la Gestión de los Riesgos. Proporciona supervisión especializada, políticas, estándares y procedimientos.</p>
+          <ul>
+            <li>Establece políticas y procedimientos de gestión de riesgos</li>
+            <li>Realiza evaluaciones periódicas de riesgos y controles</li>
+            <li>Monitorea la implementación de controles y mitigación</li>
+            <li>Informa a la alta dirección sobre riesgos y controles</li>
+          </ul>
         </div>
         <div class="tl-dot">2L</div>
       </div>
       <div class="tl-item reveal-left">
         <div class="tl-content">
-          <h3>Auditoría Interna</h3>
+          <h3>Tercera Línea (3LD)</h3>
           <div class="role">Aseguramiento independiente</div>
-          <p>Evalúa objetivamente la eficacia de la 1ª y 2ª línea con reporte directo al Consejo de Administración.</p>
+          <p>Auditoría Interna. Proporciona una evaluación independiente de la efectividad de las actividades de gestión de riesgos y control interno. Informa a la alta dirección y hace recomendaciones.</p>
+          <ul>
+            <li>Evaluación independiente y objetiva</li>
+            <li>Revisiones periódicas de procesos y controles</li>
+            <li>Reporte directo a la Alta Dirección</li>
+          </ul>
         </div>
         <div class="tl-dot">3L</div>
       </div>
@@ -598,49 +1180,51 @@
   </div>
 </section>
 
-<!-- COSO -->
-<section id="coso" class="network">
+<!-- ============================================= -->
+<!-- TAB 4: COSO -->
+<!-- ============================================= -->
+<section class="tab-panel network" data-tab="coso">
   <div class="wrap network-inner">
     <div class="network-media reveal-left">
-      <div class="network-avatar">COSO</div>
+      <div class="network-avatar">COSO<br>2013<br>ERM 2017</div>
     </div>
     <div class="network-content reveal-right">
       <span class="section-tag" style="color:var(--dorado)">Marco COSO</span>
       <h2>Los 5 componentes de Control Interno</h2>
-      <p>Un sistema integrado que conecta cultura, riesgo, control, información y monitoreo.</p>
+      <p>Un sistema integrado que conecta cultura, riesgo, control, información y monitoreo. Adoptamos COSO 2013 y COSO ERM 2017 para gestionar el riesgo de manera integral.</p>
       <ul class="coso-list">
         <li>
           <div class="coso-head">
             <div class="coso-num">01</div>
-            <div><h3>Entorno de Control</h3><p>Cultura ética, transparencia, tono desde el liderazgo.</p></div>
+            <div><h3>Entorno de Control</h3><p>Cultura ética, transparencia, tono desde el liderazgo, estructura organizacional clara.</p></div>
           </div>
           <div class="bar-track"><div class="bar-fill" data-width="95%"></div></div>
         </li>
         <li>
           <div class="coso-head">
             <div class="coso-num">02</div>
-            <div><h3>Evaluación de Riesgos</h3><p>Identificación y ponderación de riesgos operativos, normativos y de fraude.</p></div>
+            <div><h3>Evaluación de Riesgos</h3><p>Identificación y ponderación de riesgos operativos, normativos y de fraude. Alineación con el plan estratégico.</p></div>
           </div>
           <div class="bar-track"><div class="bar-fill" data-width="88%"></div></div>
         </li>
         <li>
           <div class="coso-head">
             <div class="coso-num">03</div>
-            <div><h3>Actividades de Control</h3><p>Políticas, procedimientos, controles automatizados en ERP.</p></div>
+            <div><h3>Actividades de Control</h3><p>Políticas, procedimientos y controles integrados en los procesos clave para mitigar riesgos.</p></div>
           </div>
           <div class="bar-track"><div class="bar-fill" data-width="92%"></div></div>
         </li>
         <li>
           <div class="coso-head">
             <div class="coso-num">04</div>
-            <div><h3>Información y Comunicación</h3><p>Flujo oportuno de datos e indicadores clave (KRI/KCI).</p></div>
+            <div><h3>Información y Comunicación</h3><p>Flujo oportuno de datos e indicadores clave (KPI, KRI, KCI). Canales efectivos internos y externos.</p></div>
           </div>
           <div class="bar-track"><div class="bar-fill" data-width="85%"></div></div>
         </li>
         <li>
           <div class="coso-head">
             <div class="coso-num">05</div>
-            <div><h3>Actividades de Monitoreo</h3><p>Evaluaciones continuas para asegurar que el sistema funcione.</p></div>
+            <div><h3>Actividades de Monitoreo</h3><p>Evaluaciones continuas para asegurar que el sistema de control interno funcione y mejore.</p></div>
           </div>
           <div class="bar-track"><div class="bar-fill" data-width="90%"></div></div>
         </li>
@@ -649,38 +1233,245 @@
   </div>
 </section>
 
-<!-- FRAUDE -->
-<section id="fraude" class="invest">
+<!-- ============================================= -->
+<!-- TAB 5: PROCESOS / ROLES -->
+<!-- ============================================= -->
+<section class="tab-panel roles" data-tab="procesos">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="section-tag">Nuestros procesos y roles</span>
+      <h2>Lo que hacemos y lo que NO hacemos</h2>
+      <p>Claridad total sobre nuestro ámbito de competencia para evitar etiquetas y malentendidos.</p>
+      <div class="divider"></div>
+    </div>
+    <div class="roles-grid">
+
+      <div class="role-card reveal">
+        <div class="role-icon"><i class="fas fa-file-alt"></i></div>
+        <h3>Gestión Documental</h3>
+        <div class="role-sub">Metodología, no ejecución</div>
+        <ul>
+          <li>Asesoramos en creación y actualización de documentos</li>
+          <li>Damos marcos, plantillas y guías</li>
+          <li>Revisamos que cumplan con lineamientos de control</li>
+          <li>Mantenemos el sistema de gestión documental</li>
+          <li>Capacitamos en gestión documental</li>
+          <li>Coordinamos y supervisamos difusión</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal">
+        <div class="role-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <h3>Gestión de Riesgos</h3>
+        <div class="role-sub">Identificar, evaluar, monitorear</div>
+        <ul>
+          <li>Establecemos políticas y procedimientos</li>
+          <li>Realizamos evaluaciones periódicas</li>
+          <li>Asesoramos en identificación y gestión</li>
+          <li>Monitoreamos controles y mitigación</li>
+          <li>Informamos a la Alta Dirección</li>
+          <li>Consolidamos reportes de eventos de pérdida</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal">
+        <div class="role-icon"><i class="fas fa-shield-virus"></i></div>
+        <h3>Prevención de Fraudes</h3>
+        <div class="role-sub">Prevenir, detectar, responder</div>
+        <ul>
+          <li>Diseñamos esquemas de prevención y detección</li>
+          <li>Analizamos señales de alerta</li>
+          <li>Aplicamos taxonomía de riesgo operacional</li>
+          <li>Promovemos cultura de integridad</li>
+          <li>Facilitamos canales de denuncia</li>
+          <li>Reportamos eventos materializados</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal">
+        <div class="role-icon"><i class="fas fa-search"></i></div>
+        <h3>Evaluación de Controles</h3>
+        <div class="role-sub">Diseño y ejecución</div>
+        <ul>
+          <li>Evaluamos alcance, diseño y ejecución</li>
+          <li>Calificamos: Fuerte, Satisfactorio, Mejora, Débil</li>
+          <li>Emitimos calificación A, B, C, D o E</li>
+          <li>Colaboramos en planes correctivos</li>
+          <li>Documentamos resultados y deficiencias</li>
+          <li>Reportamos a partes interesadas</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal">
+        <div class="role-icon"><i class="fas fa-eye"></i></div>
+        <h3>Supervisión y Monitoreo</h3>
+        <div class="role-sub">Continuo y basado en riesgos</div>
+        <ul>
+          <li>Monitoreamos riesgos críticos con KRIs y KCIs</li>
+          <li>Damos seguimiento a riesgos en MaRC</li>
+          <li>Consolidamos eventos de pérdida</li>
+          <li>Revisión anual de riesgos</li>
+          <li>Actualizamos la Matriz de Riesgos y Controles</li>
+          <li>Reportamos a la Alta Dirección</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal">
+        <div class="role-icon"><i class="fas fa-bullhorn"></i></div>
+        <h3>Información y Comunicación</h3>
+        <div class="role-sub">Relevante, íntegra y oportuna</div>
+        <ul>
+          <li>Aseguramos flujo oportuno de información</li>
+          <li>Diseñamos reportes claros</li>
+          <li>Capacitamos en control interno y riesgos</li>
+          <li>Supervisamos cumplimiento de políticas</li>
+          <li>Identificamos oportunidades de mejora</li>
+          <li>Proponemos herramientas y tecnologías</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================= -->
+<!-- TAB 6: BENEFICIOS -->
+<!-- ============================================= -->
+<section class="tab-panel benefits" data-tab="beneficios">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="section-tag">Lo que ganas con nosotros</span>
+      <h2>¿Qué ganas cuando trabajas con Control Interno?</h2>
+      <p>No somos un trámite. Somos el equipo que te ayuda a operar con confianza, anticipar problemas y proteger lo que construyes.</p>
+      <div class="divider"></div>
+    </div>
+    <div class="benefits-grid">
+
+      <article class="benefit-card reveal">
+        <div class="benefit-icon"><i class="fas fa-lock"></i></div>
+        <h3>Operación blindada</h3>
+        <p>Anticipamos riesgos y fraudes antes de que toquen tu área.</p>
+      </article>
+
+      <article class="benefit-card reveal">
+        <div class="benefit-icon"><i class="fas fa-bolt"></i></div>
+        <h3>Decisiones más rápidas</h3>
+        <p>Información confiable y metodología clara para que decidas sin frenos.</p>
+      </article>
+
+      <article class="benefit-card reveal">
+        <div class="benefit-icon"><i class="fas fa-chart-line"></i></div>
+        <h3>Procesos más ágiles</h3>
+        <p>Detectamos cuellos de botella y eliminamos retrabajos.</p>
+      </article>
+
+      <article class="benefit-card reveal">
+        <div class="benefit-icon"><i class="fas fa-handshake"></i></div>
+        <h3>Acompañamiento real</h3>
+        <p>No te dejamos solo: te damos herramientas, capacitación y soporte.</p>
+      </article>
+
+    </div>
+    <div style="text-align:center;margin-top:50px;" class="reveal">
+      <a href="#" data-tab-link="contacto" class="btn btn-dorado">Agenda una asesoría con nosotros</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================= -->
+<!-- TAB 7: ANTES VS DESPUÉS -->
+<!-- ============================================= -->
+<section class="tab-panel before-after" data-tab="antes-despues">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="section-tag">La transformación</span>
+      <h2>Antes vs. Después de Control Interno</h2>
+      <p>Así cambia tu operación cuando trabajas con nosotros.</p>
+      <div class="divider"></div>
+    </div>
+
+    <div class="ba-grid">
+      <div class="ba-column ba-before reveal-left">
+        <div class="ba-header">
+          <span class="ba-badge">Antes</span>
+          <h3>Sin Control Interno</h3>
+        </div>
+        <ul class="ba-list">
+          <li><i class="fas fa-times-circle"></i> Riesgos detectados tarde</li>
+          <li><i class="fas fa-times-circle"></i> Fraudes sin control</li>
+          <li><i class="fas fa-times-circle"></i> Procesos lentos y duplicados</li>
+          <li><i class="fas fa-times-circle"></i> Decisiones sin datos</li>
+        </ul>
+      </div>
+
+      <div class="ba-arrow reveal-scale">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+
+      <div class="ba-column ba-after reveal-right">
+        <div class="ba-header">
+          <span class="ba-badge">Después</span>
+          <h3>Con Control Interno</h3>
+        </div>
+        <ul class="ba-list">
+          <li><i class="fas fa-check-circle"></i> Riesgos anticipados con KRIs</li>
+          <li><i class="fas fa-check-circle"></i> Esquemas de prevención activos</li>
+          <li><i class="fas fa-check-circle"></i> Flujos simplificados y ágiles</li>
+          <li><i class="fas fa-check-circle"></i> Información confiable y oportuna</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:50px;" class="reveal">
+      <a href="#" data-tab-link="contacto" class="btn btn-dorado">Quiero esta transformación</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================= -->
+<!-- TAB 8: FRAUDE -->
+<!-- ============================================= -->
+<section class="tab-panel invest" data-tab="fraude">
   <div class="wrap">
     <div class="section-head reveal">
       <span class="section-tag">Prevención y anticorrupción</span>
       <h2>Riesgos, fraudes y debida diligencia</h2>
-      <p>Cerramos las tres condiciones del fraude: oportunidad, racionalización y presión.</p>
+      <p>Cerramos las puertas al fraude con taxonomía de riesgo operacional, segregación de funciones y protocolos claros.</p>
       <div class="divider"></div>
     </div>
     <div class="invest-grid">
       <div class="invest-item reveal">
         <div class="invest-check">✓</div>
-        <div><h3>Eliminar la oportunidad (SoD)</h3><p>Configuración de segregación de funciones incompatibles: quien solicita o carga una operación no puede autorizarla ni conciliarla.</p></div>
+        <div><h3>Taxonomía de riesgo operacional</h3><p>Clasificamos eventos en: Fraude Interno, Fraude Externo, Relaciones Laborales, Clientes y Prácticas, Eventos Externos, Incidencias y Fallos, Ejecución y Procesos, y Reputacional.</p></div>
       </div>
       <div class="invest-item reveal">
         <div class="invest-check">✓</div>
-        <div><h3>Matrices de riesgos (RCM)</h3><p>Mapeo formal con escalas de probabilidad e impacto (mapas 5×5) priorizando controles preventivos automáticos.</p></div>
+        <div><h3>Matriz de Riesgos y Controles (MaRC)</h3><p>Inventario de riesgos con causas, eventos y consecuencias. Incluye los controles existentes para su mitigación y KRIs para riesgos críticos.</p></div>
       </div>
       <div class="invest-item reveal">
         <div class="invest-check">✓</div>
-        <div><h3>Canales seguros y ética</h3><p>Difusión del código de conducta y canales de denuncia anónimos con garantías de no represalia.</p></div>
+        <div><h3>Certificado de Eventos de Pérdida</h3><p>Reporte mensual de riesgos materializados y quebrantos: fecha, descripción y monto. Permite identificar tendencias y ajustar controles.</p></div>
       </div>
       <div class="invest-item reveal">
         <div class="invest-check">✓</div>
-        <div><h3>Debida diligencia (Due Diligence)</h3><p>Filtros preventivos y validaciones periódicas a proveedores, contratistas, pagos y donaciones.</p></div>
+        <div><h3>Análisis de escenarios</h3><p>Evaluamos riesgos identificados, críticos y cambios. Desarrollamos escenarios realistas, evaluamos impacto/probabilidad y priorizamos.</p></div>
+      </div>
+      <div class="invest-item reveal">
+        <div class="invest-check">✓</div>
+        <div><h3>Tratamiento del riesgo</h3><p>Definimos estrategias: Aceptar, Reducir, Compartir o Evitar. Cada plan de acción incluye causa raíz, actividades, responsables, evidencia y fechas.</p></div>
+      </div>
+      <div class="invest-item reveal">
+        <div class="invest-check">✓</div>
+        <div><h3>KRIs y KCIs</h3><p>Indicadores Clave de Riesgo (señales tempranas) y de Control (efectividad). Se asignan a riesgos residuales críticos ("Muy Alto").</p></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FAQ -->
-<section id="faq" class="faq-section">
+<!-- ============================================= -->
+<!-- TAB 9: FAQ -->
+<!-- ============================================= -->
+<section class="tab-panel faq-section" data-tab="faq">
   <div class="wrap">
     <div class="section-head reveal">
       <span class="section-tag">Preguntas frecuentes</span>
@@ -698,6 +1489,19 @@
         <div class="faq-body">
           <p><strong>No.</strong> El dueño natural del proceso (Primera Línea) domina la operación técnica y es responsable de redactar y actualizar sus manuales y procedimientos.</p>
           <p><strong>Nuestro rol:</strong> brindamos asesoría metodológica, revisamos los flujos para verificar que los controles clave estén bien ubicados y aseguramos que no existan conflictos de segregación de funciones.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-header" type="button">
+          ¿Qué significa que somos "Segunda Línea de Defensa"?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-body">
+          <p>Según el Modelo de las Tres Líneas del IIA:</p>
+          <p><strong>1LD (Unidades de Negocio y Áreas de Soporte):</strong> Son propietarias de los riesgos y los gestionan. Implementan controles y documentan sus procesos.</p>
+          <p><strong>2LD (Contraloría / Control Interno):</strong> Contribuye a evaluar y monitorear los riesgos. Establece el marco para la Gestión de los Riesgos. Proporciona supervisión especializada, políticas, estándares y procedimientos.</p>
+          <p><strong>3LD (Auditoría Interna):</strong> Proporciona evaluación independiente de la efectividad de las dos primeras líneas.</p>
         </div>
       </div>
 
@@ -754,21 +1558,79 @@
         </div>
       </div>
 
+      <div class="faq-item reveal">
+        <button class="faq-header" type="button">
+          ¿Qué es la MaRC y para qué sirve?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-body">
+          <p>La <strong>Matriz de Riesgos y Controles (MaRC)</strong> es el inventario de riesgos de la organización. Incluye los riesgos identificados en los diferentes procesos, los controles existentes destinados a su mitigación y los KRIs para riesgos críticos.</p>
+          <p>Es una herramienta clave para monitorear riesgos, priorizar recursos y tomar decisiones informadas.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-header" type="button">
+          ¿Qué son los KRIs, KCIs y KPIs?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-body">
+          <p><strong>KRI (Key Risk Indicator):</strong> Métrica que proporciona señales tempranas sobre la probabilidad de ocurrencia de eventos adversos.</p>
+          <p><strong>KCI (Key Control Indicator):</strong> Métrica que evalúa la efectividad de los controles implementados.</p>
+          <p><strong>KPI (Key Performance Indicator):</strong> Métrica que evalúa la eficacia y eficiencia de los procesos operativos.</p>
+          <p>Los KRIs y KCIs se asignan únicamente a riesgos residuales críticos ("Muy Alto") que superen el nivel de tolerancia.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-header" type="button">
+          ¿Qué es el "Certificado de Eventos de Pérdida"?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-body">
+          <p>Es el formato mediante el cual las áreas operativas reportan <strong>mensualmente</strong> los riesgos materializados y los quebrantos económicos a Control Interno y Contraloría.</p>
+          <p>Incluye: fecha de ocurrencia, descripción del evento y monto de los quebrantos. Permite monitorear riesgos, identificar tendencias y tomar decisiones informadas sobre recursos y controles.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-header" type="button">
+          ¿Qué significa "El Control Interno Somos Todos"?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-body">
+          <p>El control interno <strong>no es responsabilidad exclusiva</strong> de un área o departamento. Toda la organización tiene un papel fundamental en su éxito. Cada colaborador, independientemente de su nivel jerárquico o función, tiene el compromiso de:</p>
+          <p>• <strong>Proteger los activos</strong> de la empresa.</p>
+          <p>• <strong>Cumplir con las políticas y procedimientos</strong> establecidos.</p>
+          <p>• <strong>Identificar y reportar riesgos</strong> en sus áreas de trabajo.</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<!-- CTA FINAL -->
-<section id="contacto" class="cta-final">
+<!-- ============================================= -->
+<!-- TAB 10: CONTACTO -->
+<!-- ============================================= -->
+<section class="tab-panel cta-final" data-tab="contacto">
   <div class="wrap cta-inner">
     <div class="cta-content reveal-left">
       <span class="section-tag" style="color:#fff">Canales de atención</span>
-      <h2>Impulsamos la valentía para alcanzar lo extraordinario</h2>
+      <h2>¿Necesitas apoyo en riesgos, controles o documentación?</h2>
       <p>Acude con nosotros ante nuevos proyectos o sistemas, detección de cuellos de botella, actualización de matrices de riesgo o programas de capacitación en cultura de control.</p>
-      <a href="mailto:controlinterno@empresa.com" class="btn btn-blanco">Escríbenos directamente</a>
+      <ul>
+        <li>Asesoría en creación y actualización de documentos normativos</li>
+        <li>Metodología para identificar y evaluar riesgos</li>
+        <li>Guía para diseñar y evaluar controles</li>
+        <li>Esquemas de prevención y detección de fraudes</li>
+        <li>Reportes e informes de monitoreo</li>
+        <li>Talleres y acompañamiento metodológico</li>
+      </ul>
+      <a href="mailto:controlinterno@coma.com" class="btn btn-blanco">Escríbenos directamente</a>
     </div>
     <div class="cta-form reveal-right">
-      <h3>Comienza con una cotización gratuita</h3>
+      <h3>Solicita asesoría o capacitación</h3>
       <form id="contactForm">
         <div class="form-group">
           <input type="text" placeholder="Nombre" required>
@@ -777,7 +1639,7 @@
           <input type="email" placeholder="Correo electrónico" required>
         </div>
         <div class="form-group">
-          <textarea rows="3" placeholder="Mensaje" required></textarea>
+          <textarea rows="3" placeholder="¿En qué necesitas apoyo?" required></textarea>
         </div>
         <label class="form-check">
           <input type="checkbox" required> Acepto los términos del servicio
@@ -789,44 +1651,94 @@
 </section>
 
 <footer>
-  <strong>Control Interno</strong>
-  Gestión de riesgos · Cumplimiento · Mejora continua
+  <strong>Control Interno · COMA</strong>
+  Segunda Línea de Defensa · Gestión de Riesgos · Prevención de Fraudes · Mejora Continua
+  <p style="margin-top:14px;font-size:.78rem;">CM-PLG-CONTCI-01 · Manual de Control Interno · Contraloría · Gobierno Corporativo</p>
 </footer>
 
 <!-- BACK TO TOP -->
 <button class="back-top" id="backTop" aria-label="Volver arriba">↑</button>
 
+<!-- ============================================= -->
+<!-- SIDEBAR LATERAL DERECHO -->
+<!-- ============================================= -->
+<div class="side-trigger" id="sideTrigger"></div>
+
+<div class="side-hint" id="sideHint">
+  <i class="fas fa-chevron-left"></i>
+</div>
+
+<aside class="side-rail">
+  <div class="side-panel" id="sidePanel">
+    <div class="side-panel-title">
+      <i class="fas fa-layer-group"></i> Secciones
+    </div>
+    <ul class="side-panel-list">
+      <li><button data-tab-link="proposito"><i class="fas fa-bullseye"></i> Propósito</button></li>
+      <li><button data-tab-link="tres-lineas"><i class="fas fa-sitemap"></i> Tres Líneas</button></li>
+      <li><button data-tab-link="expertos"><i class="fas fa-users"></i> Timeline 3L</button></li>
+      <li><button data-tab-link="coso"><i class="fas fa-cubes"></i> COSO</button></li>
+      <li><button data-tab-link="procesos"><i class="fas fa-tasks"></i> Procesos</button></li>
+      <li><button data-tab-link="beneficios"><i class="fas fa-gift"></i> Beneficios</button></li>
+      <li><button data-tab-link="antes-despues"><i class="fas fa-exchange-alt"></i> Transformación</button></li>
+      <li><button data-tab-link="fraude"><i class="fas fa-shield-virus"></i> Fraude</button></li>
+      <li><button data-tab-link="faq"><i class="fas fa-question-circle"></i> FAQ</button></li>
+      <li><button data-tab-link="contacto"><i class="fas fa-envelope"></i> Contacto</button></li>
+    </ul>
+  </div>
+</aside>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
+  /* ===== NAVBAR SCROLL ===== */
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 50);
-  });
+  }, { passive: true });
 
+  /* ===== HERO CARRUSEL ===== */
   const slides = document.querySelectorAll('.hero-slide');
   const dots = document.querySelectorAll('.hero-dot');
   let currentSlide = 0;
-  let slideInterval;
+  let slideInterval = null;
+  const SLIDE_DURATION = 2000; // ✅ 2 segundos
 
   function goToSlide(index) {
     slides.forEach((s, i) => s.classList.toggle('active', i === index));
     dots.forEach((d, i) => d.classList.toggle('active', i === index));
     currentSlide = index;
   }
-  function nextSlide() { goToSlide((currentSlide + 1) % slides.length); }
-  function startCarousel() { slideInterval = setInterval(nextSlide, 5000); }
-  function stopCarousel() { clearInterval(slideInterval); }
 
+  function nextSlide() {
+    goToSlide((currentSlide + 1) % slides.length);
+  }
+
+  function startCarousel() {
+    stopCarousel();
+    if (slides.length === 0) return;
+    slideInterval = setInterval(nextSlide, SLIDE_DURATION); // ✅ sin pausa
+  }
+
+  function stopCarousel() {
+    if (slideInterval) {
+      clearInterval(slideInterval);
+      slideInterval = null;
+    }
+  }
+
+  // Click en dots
   dots.forEach((dot, i) => {
     dot.addEventListener('click', () => {
-      stopCarousel();
       goToSlide(i);
       startCarousel();
     });
   });
+
+  // ✅ Iniciar el carrusel al cargar
   startCarousel();
 
+  /* ===== REVEAL OBSERVER ===== */
   const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -838,6 +1750,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
   revealEls.forEach(el => revealObserver.observe(el));
 
+  /* ===== CONTADORES ===== */
   const counters = document.querySelectorAll('.metric-num');
   const counterObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -861,6 +1774,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.5 });
   counters.forEach(c => counterObserver.observe(c));
 
+  /* ===== BARRAS COSO ===== */
   const bars = document.querySelectorAll('.bar-fill');
   const barObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -873,6 +1787,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.4 });
   bars.forEach(b => barObserver.observe(b));
 
+  /* ===== FAQ ACORDEÓN ===== */
   document.querySelectorAll('.faq-header').forEach(header => {
     header.addEventListener('click', () => {
       const item = header.parentElement;
@@ -889,28 +1804,208 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  document.getElementById('contactForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const btn = e.target.querySelector('button[type="submit"]');
-    const original = btn.textContent;
-    btn.textContent = '✓ Enviado';
-    btn.style.background = '#fff';
-    btn.style.color = 'var(--dorado-oscuro)';
-    setTimeout(() => {
-      btn.textContent = original;
-      btn.style.background = '';
-      btn.style.color = '';
-      e.target.reset();
-    }, 2500);
-  });
+  /* ===== FORM CONTACTO ===== */
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      const original = btn.textContent;
+      btn.textContent = '✓ Enviado';
+      btn.style.background = '#fff';
+      btn.style.color = 'var(--dorado-oscuro)';
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.style.background = '';
+        btn.style.color = '';
+        e.target.reset();
+      }, 2500);
+    });
+  }
 
+  /* ===== BACK TO TOP ===== */
   const backTop = document.getElementById('backTop');
   window.addEventListener('scroll', () => {
     backTop.classList.toggle('show', window.scrollY > 600);
-  });
+  }, { passive: true });
   backTop.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+
+  /* ===== SISTEMA DE TABS ===== */
+  const tabLinks = document.querySelectorAll('[data-tab-link]');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  const sideButtons = document.querySelectorAll('.side-panel-list button');
+  const heroHome = document.getElementById('heroHome');
+  const metricsHome = document.getElementById('metricsHome');
+  const btnInicio = document.getElementById('btnInicio');
+
+  let activeTab = null;
+
+  function showHome(){
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.classList.remove('active', 'closing');
+    });
+    heroHome.classList.remove('hidden');
+    metricsHome.classList.remove('hidden');
+    btnInicio.classList.add('hidden');
+    sideButtons.forEach(b => b.classList.remove('active'));
+    activeTab = null;
+    goToSlide(0); // ✅ reiniciar al slide 1
+    history.pushState({tab: null}, '', '#');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    startCarousel();
+  }
+
+  function showTab(tabId, push = true){
+    if(tabId === activeTab) return;
+
+    const next = document.querySelector(`.tab-panel[data-tab="${tabId}"]`);
+    if(!next) return;
+
+    heroHome.classList.add('hidden');
+    metricsHome.classList.add('hidden');
+
+    const current = document.querySelector('.tab-panel.active');
+    if(current){
+      current.classList.add('closing');
+      current.classList.remove('active');
+      setTimeout(() => { current.classList.remove('closing'); }, 350);
+    }
+
+    setTimeout(() => {
+      next.classList.add('active');
+
+      next.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+        el.classList.remove('visible');
+      });
+
+      setTimeout(() => {
+        next.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+          el.classList.add('visible');
+        });
+
+        next.querySelectorAll('.bar-fill').forEach(bar => {
+          bar.style.width = '0';
+          setTimeout(() => { bar.style.width = bar.dataset.width; }, 150);
+        });
+      }, 80);
+    }, 300);
+
+    sideButtons.forEach(b => {
+      b.classList.toggle('active', b.dataset.tabLink === tabId);
+    });
+
+    activeTab = tabId;
+    btnInicio.classList.remove('hidden');
+
+    if(push){
+      history.pushState({tab: tabId}, '', `#${tabId}`);
+    }
+
+    scrollToTabs();
+  }
+
+  function scrollToTabs(){
+    const anchor = document.getElementById('tabsAnchor');
+    if(!anchor) return;
+    const navbarHeight = navbar.offsetHeight;
+    const top = anchor.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 10;
+    window.scrollTo({ top: top, behavior: 'smooth' });
+  }
+
+  tabLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tabId = link.dataset.tabLink;
+      if(tabId) showTab(tabId);
+    });
+  });
+
+  btnInicio.addEventListener('click', showHome);
+
+  document.getElementById('brandHome').addEventListener('click', (e) => {
+    e.preventDefault();
+    showHome();
+  });
+
+  window.addEventListener('load', () => {
+    const hash = window.location.hash.replace('#', '');
+    const validTabs = Array.from(tabPanels).map(p => p.dataset.tab);
+    if(hash && validTabs.includes(hash)){
+      showTab(hash, false);
+    } else {
+      showHome();
+    }
+  });
+
+  window.addEventListener('popstate', (e) => {
+    if(e.state && e.state.tab){
+      showTab(e.state.tab, false);
+    } else {
+      showHome();
+    }
+  });
+
+  /* ===== SIDEBAR LATERAL ===== */
+  const sideTrigger = document.getElementById('sideTrigger');
+  const sidePanel = document.getElementById('sidePanel');
+  const sideHint = document.getElementById('sideHint');
+  let hideTimeout;
+
+  // Detectar si es táctil (móvil/tablet)
+  const isTouch = window.matchMedia('(hover: none)').matches;
+
+  function openSide(){
+    clearTimeout(hideTimeout);
+    sidePanel.classList.add('open');
+    sideHint.classList.add('hidden');
+  }
+
+  function closeSide(){
+    hideTimeout = setTimeout(() => {
+      sidePanel.classList.remove('open');
+      sideHint.classList.remove('hidden');
+    }, 400);
+  }
+
+  // Desktop: hover
+  sideTrigger.addEventListener('mouseenter', openSide);
+  sidePanel.addEventListener('mouseenter', openSide);
+  sidePanel.addEventListener('mouseleave', closeSide);
+  sideTrigger.addEventListener('mouseleave', closeSide);
+  sideHint.addEventListener('mouseenter', openSide);
+
+  // Táctil (móvil/tablet): tap para abrir/cerrar
+  if (isTouch) {
+    sideHint.style.pointerEvents = 'auto';
+    sideHint.style.cursor = 'pointer';
+
+    sideHint.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (sidePanel.classList.contains('open')) {
+        closeSide();
+      } else {
+        openSide();
+      }
+    });
+
+    // Cerrar al tocar un botón del panel
+    sidePanel.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setTimeout(closeSide, 200);
+      });
+    });
+
+    // Cerrar al tocar fuera del panel
+    document.addEventListener('click', (e) => {
+      if (sidePanel.classList.contains('open') &&
+          !sidePanel.contains(e.target) &&
+          !sideHint.contains(e.target)) {
+        closeSide();
+      }
+    });
+  }
 
 });
 </script>
