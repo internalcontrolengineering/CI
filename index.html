@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Control Interno COMA | Gestión de Riesgos y Excelencia Operativa</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
   :root{
@@ -45,46 +45,98 @@
   .reveal-scale{opacity:0;transform:scale(.85);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1)}
   .reveal-scale.visible{opacity:1;transform:scale(1)}
 
-  /* ===== NAVBAR ===== */
+  /* ===== NAVBAR PREMIUM ===== */
   .navbar{
     position:sticky;top:0;z-index:1000;
-    background:rgba(255,255,255,.95);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-    box-shadow:0 2px 20px rgba(0,0,0,.06);
-    transition:box-shadow .3s;
+    background:linear-gradient(180deg, #ffffff 0%, #fdfdfd 100%);
+    box-shadow:0 1px 0 rgba(0,0,0,.04), 0 4px 24px rgba(0,0,0,.05);
+    transition:box-shadow .3s, padding .3s;
   }
-  .navbar.scrolled{box-shadow:0 4px 30px rgba(0,0,0,.12)}
-  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:20px}
-  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;cursor:pointer}
-  .brand-mark{
-    width:44px;height:44px;border-radius:50%;
-    background:var(--dorado);
-    display:grid;place-items:center;color:#fff;font-weight:800;font-size:1rem;
-    box-shadow:0 8px 20px rgba(201,162,39,.35);
+  .navbar::after{
+    content:"";
+    position:absolute;bottom:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg, transparent 0%, var(--dorado) 30%, var(--dorado-claro) 50%, var(--dorado) 70%, transparent 100%);
+    opacity:.5;
+  }
+  .navbar.scrolled{box-shadow:0 1px 0 rgba(0,0,0,.06), 0 6px 30px rgba(0,0,0,.10)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:20px 0;gap:24px}
+  .brand{display:flex;align-items:center;gap:22px;text-decoration:none;cursor:pointer}
+
+  .brand-logo-wrap{
+    position:relative;
+    width:88px;height:88px;
+    display:grid;place-items:center;
     flex-shrink:0;
+    border-radius:22px;
+    background:linear-gradient(135deg, rgba(201,162,39,.10) 0%, rgba(201,162,39,.02) 100%);
+    border:1.5px solid rgba(201,162,39,.22);
+    transition:transform .3s, box-shadow .3s;
   }
+  .brand-logo-wrap::before{
+    content:"";
+    position:absolute;inset:-4px;
+    border-radius:26px;
+    background:linear-gradient(135deg, var(--dorado) 0%, transparent 50%, var(--dorado-claro) 100%);
+    opacity:.5;
+    z-index:-1;
+    filter:blur(8px);
+    transition:opacity .3s;
+  }
+  .brand:hover .brand-logo-wrap{transform:translateY(-2px);box-shadow:0 12px 28px rgba(201,162,39,.28)}
+  .brand:hover .brand-logo-wrap::before{opacity:.85}
+  .brand-logo{
+    width:72px;height:72px;object-fit:contain;display:block;
+    filter:drop-shadow(0 3px 6px rgba(201,162,39,.2));
+  }
+
+  .brand-text{display:flex;flex-direction:column;gap:6px;line-height:1.15}
   .brand-text strong{
-    font-size:.95rem;letter-spacing:.16em;text-transform:uppercase;
-    font-weight:900;color:var(--gris-oscuro);display:block;
+    font-family:'Poppins', sans-serif;
+    font-size:1.55rem;
+    font-weight:700;
+    letter-spacing:-.015em;
+    color:var(--gris-oscuro);
+    display:block;
+    line-height:1.1;
+  }
+  .brand-text strong .brand-accent{
+    color:var(--dorado-oscuro);
+    font-weight:800;
   }
   .brand-text small{
-    font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--texto-gris);font-weight:600;
+    font-family:'Poppins', sans-serif;
+    font-size:.78rem;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--texto-gris);
+    font-weight:500;
+    display:flex;
+    align-items:center;
+    gap:10px;
   }
+  .brand-text small::before{
+    content:"";
+    width:28px;height:2px;
+    background:var(--dorado);
+    display:inline-block;
+    border-radius:2px;
+  }
+
   .nav-actions{display:flex;align-items:center;gap:14px}
   .btn-inicio{
     display:inline-flex;align-items:center;gap:8px;
-    padding:10px 20px;border-radius:50px;font-weight:800;font-size:.72rem;
+    padding:12px 24px;border-radius:50px;font-weight:800;font-size:.75rem;
     letter-spacing:.14em;text-transform:uppercase;text-decoration:none;
-    background:var(--dorado);color:#fff;border:none;cursor:pointer;
-    box-shadow:0 8px 20px rgba(201,162,39,.35);transition:all .25s;
+    background:linear-gradient(135deg, var(--dorado) 0%, var(--dorado-oscuro) 100%);
+    color:#fff;border:none;cursor:pointer;
+    box-shadow:0 8px 20px rgba(201,162,39,.35);
+    transition:all .25s;
     font-family:inherit;
     white-space:nowrap;
   }
-  .btn-inicio:hover{background:var(--dorado-oscuro);transform:translateY(-2px);box-shadow:0 12px 26px rgba(201,162,39,.45)}
+  .btn-inicio:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(201,162,39,.5);filter:brightness(1.05)}
   .btn-inicio.hidden{display:none}
-  .btn-inicio i{font-size:.85rem}
+  .btn-inicio i{font-size:.9rem}
 
   /* ===== HERO ===== */
   .hero{
@@ -118,6 +170,422 @@
   .circle-deco{position:absolute;border-radius:50%;z-index:1}
   .circle-deco.dorado{background:var(--dorado)}
   .circle-deco.gris{background:var(--gris-claro)}
+
+  /* ===== BLOQUE EDITABLE (HOME) ===== */
+  .home-editable{
+    margin-top:50px;
+    display:flex;
+    justify-content:center;
+  }
+  .editable-card{
+    width:100%;
+    max-width:820px;
+    background:linear-gradient(135deg, #fefefe 0%, #faf8f2 100%);
+    border:1px solid rgba(201,162,39,.22);
+    border-radius:20px;
+    padding:34px 38px;
+    box-shadow:0 12px 40px rgba(201,162,39,.10), 0 2px 6px rgba(0,0,0,.03);
+    position:relative;
+    overflow:hidden;
+  }
+  .editable-card::before{
+    content:"";
+    position:absolute;top:0;left:0;width:100%;height:4px;
+    background:linear-gradient(90deg, var(--dorado) 0%, var(--dorado-claro) 50%, var(--dorado) 100%);
+  }
+  .editable-card-title{
+    font-family:'Playfair Display', serif;
+    font-size:1.05rem;
+    font-weight:700;
+    color:var(--dorado-oscuro);
+    letter-spacing:.02em;
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .editable-card-title i{font-size:.9rem}
+  .editable-text{
+    color:var(--texto-gris);
+    font-size:.98rem;
+    line-height:1.7;
+    font-style:italic;
+    border-left:3px solid var(--dorado);
+    padding-left:18px;
+    margin:0;
+  }
+  .editable-image{
+    display:block;
+    width:100%;
+    max-height:340px;
+    object-fit:cover;
+    border-radius:14px;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
+  }
+  .editable-image.hidden{display:none}
+  .editable-text.hidden{display:none}
+
+  /* ===== MODAL CONFIG ===== */
+  .config-modal{
+    position:fixed;
+    inset:0;
+    z-index:1300;
+    background:rgba(15,15,15,.7);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .3s, visibility .3s;
+  }
+  .config-modal.open{opacity:1;visibility:visible}
+  .config-modal-inner{
+    width:100%;
+    max-width:520px;
+    background:#fff;
+    border-radius:20px;
+    box-shadow:0 30px 80px rgba(0,0,0,.4);
+    overflow:hidden;
+    transform:scale(.92) translateY(20px);
+    transition:transform .35s cubic-bezier(.22,1,.36,1);
+    max-height:90vh;
+    overflow-y:auto;
+  }
+  .config-modal.open .config-modal-inner{transform:scale(1) translateY(0)}
+  .config-modal-header{
+    background:linear-gradient(135deg, var(--gris-oscuro) 0%, var(--gris-medio) 100%);
+    color:#fff;
+    padding:24px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    position:relative;
+  }
+  .config-modal-header::after{
+    content:"";
+    position:absolute;bottom:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg, var(--dorado) 0%, var(--dorado-claro) 100%);
+  }
+  .config-modal-header h3{
+    font-family:'Playfair Display', serif;
+    font-size:1.15rem;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#fff;
+  }
+  .config-modal-header h3 i{color:var(--dorado);font-size:1rem}
+  .config-modal-close{
+    background:rgba(255,255,255,.1);
+    border:none;
+    color:#fff;
+    width:36px;height:36px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:1rem;
+    transition:all .2s;
+    display:grid;
+    place-items:center;
+  }
+  .config-modal-close:hover{background:rgba(255,255,255,.25);transform:rotate(90deg)}
+  .config-modal-body{padding:28px}
+  .config-tab-switch{
+    display:flex;
+    gap:8px;
+    margin-bottom:22px;
+    background:var(--gris-claro);
+    padding:5px;
+    border-radius:12px;
+  }
+  .config-tab-btn{
+    flex:1;
+    padding:10px 14px;
+    border-radius:9px;
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:.78rem;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--texto-gris);
+    transition:all .25s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  .config-tab-btn.active{
+    background:#fff;
+    color:var(--dorado-oscuro);
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+  }
+  .config-tab-btn i{font-size:.85rem}
+  .config-panel{display:none}
+  .config-panel.active{display:block;animation:fadeIn .35s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .config-label{
+    display:block;
+    font-size:.72rem;
+    font-weight:800;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--texto-gris);
+    margin-bottom:10px;
+  }
+  .config-textarea{
+    width:100%;
+    padding:14px 16px;
+    border-radius:12px;
+    border:1.5px solid var(--borde);
+    font-family:inherit;
+    font-size:.92rem;
+    color:var(--gris-oscuro);
+    transition:border-color .2s, box-shadow .2s;
+    resize:vertical;
+    min-height:120px;
+    line-height:1.6;
+  }
+  .config-textarea:focus{
+    outline:none;
+    border-color:var(--dorado);
+    box-shadow:0 0 0 4px rgba(201,162,39,.12);
+  }
+  .config-file-zone{
+    border:2px dashed var(--borde);
+    border-radius:14px;
+    padding:28px 20px;
+    text-align:center;
+    cursor:pointer;
+    transition:all .25s;
+    background:#fafafa;
+  }
+  .config-file-zone:hover{
+    border-color:var(--dorado);
+    background:rgba(201,162,39,.04);
+  }
+  .config-file-zone.dragover{
+    border-color:var(--dorado);
+    background:rgba(201,162,39,.08);
+    transform:scale(1.01);
+  }
+  .config-file-zone i{
+    font-size:2rem;
+    color:var(--dorado);
+    margin-bottom:10px;
+    display:block;
+  }
+  .config-file-zone p{font-size:.88rem;color:var(--texto-gris);margin-bottom:6px;font-weight:600}
+  .config-file-zone small{font-size:.72rem;color:#999}
+  .config-file-zone input[type="file"]{display:none}
+  .config-preview{
+    margin-top:16px;
+    border-radius:12px;
+    overflow:hidden;
+    border:1px solid var(--borde);
+    position:relative;
+  }
+  .config-preview img{width:100%;max-height:200px;object-fit:cover;display:block}
+  .config-preview-empty{
+    padding:20px;
+    text-align:center;
+    color:#999;
+    font-size:.82rem;
+    background:#fafafa;
+  }
+  .config-actions{
+    display:flex;
+    gap:10px;
+    margin-top:24px;
+    padding-top:20px;
+    border-top:1px solid var(--borde);
+  }
+  .config-actions button{
+    flex:1;
+    padding:13px 20px;
+    border-radius:11px;
+    border:none;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:.78rem;
+    font-weight:800;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    transition:all .22s;
+  }
+  .config-actions .btn-save{
+    background:linear-gradient(135deg, var(--dorado) 0%, var(--dorado-oscuro) 100%);
+    color:#fff;
+    box-shadow:0 6px 16px rgba(201,162,39,.3);
+  }
+  .config-actions .btn-save:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(201,162,39,.45)}
+  .config-actions .btn-cancel{
+    background:var(--gris-claro);
+    color:var(--texto-gris);
+  }
+  .config-actions .btn-cancel:hover{background:#e8e8e8}
+  .config-actions .btn-clear{
+    background:transparent;
+    color:var(--rojo);
+    border:1.5px solid rgba(198,40,40,.3);
+    flex:0 0 auto;
+    padding:13px 16px;
+  }
+  .config-actions .btn-clear:hover{background:rgba(198,40,40,.06);border-color:var(--rojo)}
+
+  /* ===== MODAL CONTRASEÑA ===== */
+  .password-modal{
+    position:fixed;
+    inset:0;
+    z-index:1400;
+    background:rgba(15,15,15,.75);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .3s, visibility .3s;
+  }
+  .password-modal.open{opacity:1;visibility:visible}
+  .password-modal-inner{
+    width:100%;
+    max-width:420px;
+    background:#fff;
+    border-radius:20px;
+    box-shadow:0 30px 80px rgba(0,0,0,.45);
+    overflow:hidden;
+    transform:scale(.92) translateY(20px);
+    transition:transform .35s cubic-bezier(.22,1,.36,1);
+    text-align:center;
+  }
+  .password-modal.open .password-modal-inner{transform:scale(1) translateY(0)}
+  .password-modal-header{
+    background:linear-gradient(135deg, var(--gris-oscuro) 0%, var(--gris-medio) 100%);
+    padding:32px 28px 26px;
+    position:relative;
+  }
+  .password-modal-header::after{
+    content:"";
+    position:absolute;bottom:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg, var(--dorado) 0%, var(--dorado-claro) 100%);
+  }
+  .password-modal-icon{
+    width:72px;height:72px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--dorado) 0%, var(--dorado-oscuro) 100%);
+    display:grid;place-items:center;
+    margin:0 auto 16px;
+    color:#fff;
+    font-size:1.7rem;
+    box-shadow:0 12px 30px rgba(201,162,39,.4);
+  }
+  .password-modal-header h3{
+    font-family:'Playfair Display', serif;
+    font-size:1.25rem;
+    font-weight:700;
+    color:#fff;
+    margin:0;
+  }
+  .password-modal-body{padding:32px 30px 28px}
+  .password-modal-body p{
+    font-size:.88rem;
+    color:var(--texto-gris);
+    margin-bottom:22px;
+    line-height:1.55;
+  }
+  .password-input-wrap{
+    position:relative;
+    margin-bottom:8px;
+  }
+  .password-input{
+    width:100%;
+    padding:15px 48px 15px 18px;
+    border-radius:12px;
+    border:1.5px solid var(--borde);
+    font-family:inherit;
+    font-size:1rem;
+    color:var(--gris-oscuro);
+    transition:border-color .2s, box-shadow .2s;
+    text-align:center;
+    letter-spacing:.15em;
+    font-weight:600;
+  }
+  .password-input:focus{
+    outline:none;
+    border-color:var(--dorado);
+    box-shadow:0 0 0 4px rgba(201,162,39,.12);
+  }
+  .password-toggle{
+    position:absolute;
+    right:14px;
+    top:50%;
+    transform:translateY(-50%);
+    background:none;
+    border:none;
+    color:#999;
+    cursor:pointer;
+    font-size:1rem;
+    padding:4px;
+    transition:color .2s;
+  }
+  .password-toggle:hover{color:var(--dorado-oscuro)}
+  .password-error{
+    font-size:.78rem;
+    color:var(--rojo);
+    font-weight:600;
+    min-height:20px;
+    margin-bottom:14px;
+    opacity:0;
+    transition:opacity .2s;
+  }
+  .password-error.show{opacity:1}
+  .password-actions{
+    display:flex;
+    gap:10px;
+    margin-top:6px;
+  }
+  .password-actions button{
+    flex:1;
+    padding:13px 20px;
+    border-radius:11px;
+    border:none;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:.78rem;
+    font-weight:800;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    transition:all .22s;
+  }
+  .password-actions .btn-cancel{
+    background:var(--gris-claro);
+    color:var(--texto-gris);
+  }
+  .password-actions .btn-cancel:hover{background:#e8e8e8}
+  .password-actions .btn-unlock{
+    background:linear-gradient(135deg, var(--dorado) 0%, var(--dorado-oscuro) 100%);
+    color:#fff;
+    box-shadow:0 6px 16px rgba(201,162,39,.3);
+  }
+  .password-actions .btn-unlock:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(201,162,39,.45)}
+
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-8px)}
+    40%{transform:translateX(8px)}
+    60%{transform:translateX(-6px)}
+    80%{transform:translateX(6px)}
+  }
+  .password-modal-inner.shake{animation:shake .4s ease}
 
   .btn{
     display:inline-flex;align-items:center;gap:10px;
@@ -521,12 +989,52 @@
   /* ===== FOOTER ===== */
   footer{
     background:var(--gris-oscuro);color:#aaa;text-align:center;
-    padding:40px 24px;font-size:.85rem;
+    padding:48px 24px;font-size:.85rem;
   }
-  footer strong{
-    color:#fff;letter-spacing:.14em;text-transform:uppercase;font-size:.78rem;
-    display:block;margin-bottom:8px;
+  footer .footer-brand{
+    color:var(--dorado);
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    font-size:.72rem;
+    font-weight:800;
+    display:block;
+    margin-bottom:22px;
   }
+  footer .footer-manifesto{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:clamp(.95rem, 1.6vw, 1.15rem);
+    line-height:1.5;
+    color:#fff;
+    max-width:820px;
+    margin:0 auto 28px;
+    padding:0 20px;
+    position:relative;
+  }
+  footer .footer-manifesto::before,
+  footer .footer-manifesto::after{
+    content:"";
+    display:block;
+    width:40px;height:2px;
+    background:var(--dorado);
+    margin:0 auto;
+  }
+  footer .footer-manifesto::before{margin-bottom:18px}
+  footer .footer-manifesto::after{margin-top:18px}
+
+  .footer-signature{
+    display:flex;align-items:center;justify-content:center;gap:12px;
+    flex-wrap:wrap;margin-top:16px;padding-top:18px;
+    border-top:1px solid #3a3a3a;
+    cursor:default;
+    user-select:none;
+  }
+  .footer-signature *{cursor:default}
+  .footer-signature img{height:28px;width:auto;object-fit:contain;opacity:.6}
+  .footer-signature .sep{width:1px;height:26px;background-color:#555}
+  .footer-signature .sig-block{display:flex;flex-direction:column;line-height:1.2;text-align:left}
+  .footer-signature .sig-title{font-size:.55rem;color:#fff}
+  .footer-signature .sig-sub{font-size:.45rem;color:#aaa;font-weight:500}
 
   /* ===== TABS / PANELES ===== */
   .tab-panel{
@@ -563,7 +1071,6 @@
     align-items:center;
     pointer-events:none;
   }
-
   .side-trigger{
     position:fixed;
     right:0;
@@ -573,7 +1080,6 @@
     z-index:1199;
     pointer-events:auto;
   }
-
   .side-panel{
     background:rgba(30,30,30,.96);
     backdrop-filter:blur(14px);
@@ -591,10 +1097,7 @@
     max-height:85vh;
     overflow-y:auto;
   }
-  .side-panel.open{
-    transform:translateX(0);
-    opacity:1;
-  }
+  .side-panel.open{transform:translateX(0);opacity:1}
   .side-panel-title{
     color:var(--dorado);
     font-size:.68rem;
@@ -609,12 +1112,7 @@
     gap:8px;
   }
   .side-panel-title i{font-size:.9rem}
-  .side-panel-list{
-    list-style:none;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-  }
+  .side-panel-list{list-style:none;display:flex;flex-direction:column;gap:4px}
   .side-panel-list button{
     width:100%;
     text-align:left;
@@ -648,10 +1146,7 @@
     transform:translateX(-4px);
   }
   .side-panel-list button:hover i{transform:scale(1.15)}
-  .side-panel-list button.active{
-    background:var(--dorado);
-    color:#fff;
-  }
+  .side-panel-list button.active{background:var(--dorado);color:#fff}
   .side-panel-list button.active i{color:#fff}
   .side-panel-list button.active::after{
     content:"";
@@ -682,16 +1177,17 @@
     opacity:1;
     transition:opacity .3s ease, transform .3s ease;
   }
-  .side-hint.hidden{
-    opacity:0;
-    transform:translateY(-50%) translateX(20px);
-  }
+  .side-hint.hidden{opacity:0;transform:translateY(-50%) translateX(20px)}
 
   /* ============================================= */
   /* RESPONSIVE — TABLET (max 1024px)              */
   /* ============================================= */
   @media(max-width:1024px){
     .wrap{padding:0 1.5rem}
+    .brand-logo-wrap{width:76px;height:76px;border-radius:20px}
+    .brand-logo{width:62px;height:62px}
+    .brand-text strong{font-size:1.35rem}
+    .brand-text small{font-size:.72rem}
     .hero-inner{gap:3rem}
     .hero-left h1{font-size:clamp(1.7rem,3.2vw,2.4rem)}
     .hero-circle{max-width:380px}
@@ -708,9 +1204,14 @@
   /* ============================================= */
   @media(max-width:900px){
     .wrap{padding:0 1.25rem}
-    .nav-inner{flex-direction:row;justify-content:space-between;padding:12px 0}
-    .brand-text small{display:none}
-    .brand-text strong{font-size:.85rem}
+    .nav-inner{flex-direction:row;justify-content:space-between;padding:14px 0;gap:12px}
+    .brand{gap:14px}
+    .brand-logo-wrap{width:64px;height:64px;border-radius:16px}
+    .brand-logo{width:52px;height:52px}
+    .brand-text strong{font-size:1.15rem}
+    .brand-text small{font-size:.66rem;letter-spacing:.14em}
+    .brand-text small::before{width:20px}
+
     .hero{padding:40px 0 60px}
     .hero-inner{grid-template-columns:1fr;gap:36px;text-align:left}
     .hero-right{order:-1}
@@ -722,6 +1223,10 @@
     .hero-dots{margin-top:20px}
     .circle-deco.dorado{width:90px !important;height:90px !important;top:-20px !important;right:-15px !important}
     .circle-deco.gris{width:130px !important;height:130px !important;bottom:-30px !important;left:-30px !important}
+
+    .home-editable{margin-top:36px}
+    .editable-card{padding:26px 22px;border-radius:16px}
+    .editable-card-title{font-size:.95rem}
 
     .metrics{padding:56px 0}
     .metrics-grid{grid-template-columns:repeat(2,1fr);gap:28px}
@@ -798,11 +1303,16 @@
     .btn{padding:14px 26px;font-size:.72rem}
     .btn-inicio{padding:9px 16px;font-size:.65rem}
 
-    footer{padding:32px 20px;font-size:.78rem}
+    footer{padding:38px 20px;font-size:.78rem}
+    footer .footer-manifesto{font-size:.95rem}
+    .footer-signature{gap:10px;margin-top:14px;padding-top:14px}
+    .footer-signature img{height:24px}
+    .footer-signature .sep{height:24px}
+    .footer-signature .sig-title{font-size:.55rem}
+    .footer-signature .sig-sub{font-size:.45rem}
 
     .back-top{width:46px;height:46px;bottom:20px;right:20px;font-size:1.1rem}
 
-    /* Sidebar móvil: se abre con botón y se cierra al tocar fuera */
     .side-trigger{width:36px}
     .side-panel{
       min-width:240px;
@@ -819,8 +1329,12 @@
   /* ============================================= */
   @media(max-width:600px){
     .wrap{padding:0 1rem}
-    .brand-mark{width:38px;height:38px;font-size:.85rem}
-    .brand-text strong{font-size:.78rem;letter-spacing:.12em}
+    .nav-inner{padding:12px 0;gap:10px}
+    .brand{gap:10px}
+    .brand-logo-wrap{width:52px;height:52px;border-radius:14px}
+    .brand-logo{width:42px;height:42px}
+    .brand-text strong{font-size:.98rem;line-height:1.15}
+    .brand-text small{display:none}
     .btn-inicio{padding:8px 14px;font-size:.6rem;gap:6px}
     .btn-inicio i{font-size:.75rem}
 
@@ -830,6 +1344,10 @@
     .hero-left p{font-size:.9rem}
     .hero-left .tag{font-size:.58rem}
     .btn{padding:13px 22px;font-size:.68rem;letter-spacing:.1em}
+
+    .editable-card{padding:22px 18px}
+    .editable-card-title{font-size:.88rem}
+    .editable-text{font-size:.9rem;padding-left:14px}
 
     .metrics{padding:44px 0}
     .metrics-grid{grid-template-columns:1fr 1fr;gap:22px}
@@ -900,8 +1418,29 @@
 
     .back-top{width:42px;height:42px;bottom:16px;right:16px;font-size:1rem}
 
-    footer{padding:28px 16px;font-size:.72rem}
-    footer p{font-size:.68rem}
+    .config-modal{padding:12px}
+    .config-modal-inner{max-width:100%;border-radius:16px}
+    .config-modal-header{padding:18px 20px}
+    .config-modal-header h3{font-size:1rem}
+    .config-modal-body{padding:20px}
+    .config-actions{flex-wrap:wrap}
+    .config-actions button{flex:1 1 100%}
+
+    .password-modal{padding:12px}
+    .password-modal-inner{max-width:100%;border-radius:16px}
+    .password-modal-header{padding:26px 20px 22px}
+    .password-modal-icon{width:60px;height:60px;font-size:1.4rem;margin-bottom:14px}
+    .password-modal-header h3{font-size:1.1rem}
+    .password-modal-body{padding:24px 20px 22px}
+    .password-actions{flex-direction:column}
+
+    footer{padding:30px 16px;font-size:.72rem}
+    footer .footer-manifesto{font-size:.85rem;padding:0 10px}
+    .footer-signature{gap:8px;margin-top:12px;padding-top:12px}
+    .footer-signature img{height:20px}
+    .footer-signature .sep{height:20px}
+    .footer-signature .sig-title{font-size:.5rem}
+    .footer-signature .sig-sub{font-size:.42rem}
   }
 
   /* ============================================= */
@@ -912,6 +1451,11 @@
     .metric-num{font-size:1.75rem}
     .btn{padding:12px 20px;font-size:.62rem}
     .side-panel{min-width:180px;max-width:200px}
+    .footer-signature{flex-direction:column;gap:6px}
+    .footer-signature .sep{width:24px;height:1px}
+    .brand-logo-wrap{width:46px;height:46px}
+    .brand-logo{width:36px;height:36px}
+    .brand-text strong{font-size:.85rem}
   }
 
   /* ============================================= */
@@ -935,10 +1479,12 @@
 <nav class="navbar" id="navbar">
   <div class="wrap nav-inner">
     <a href="#" class="brand" id="brandHome">
-      <div class="brand-mark">CI</div>
+      <div class="brand-logo-wrap">
+        <img src="https://raw.githubusercontent.com/internalcontrolengineering/Desarrollos/main/LogoCI-G.png" alt="Control Interno" class="brand-logo">
+      </div>
       <div class="brand-text">
-        <strong>Control Interno</strong>
-        <small>COMA · 2ª Línea de Defensa</small>
+        <strong>Departamento de <span class="brand-accent">Control Interno</span></strong>
+        <small>Segunda Línea de Defensa</small>
       </div>
     </a>
     <div class="nav-actions">
@@ -954,7 +1500,6 @@
   <div class="wrap hero-inner">
     <div class="hero-left reveal-left">
 
-      <!-- Slide 1: Propósito -->
       <div class="hero-slide active">
         <span class="tag">Segunda Línea de Defensa · COMA</span>
         <h1>Estamos comprometidos con <span class="dorado">blindar la operación</span> para avanzar con certidumbre.</h1>
@@ -962,7 +1507,6 @@
         <a href="#" data-tab-link="proposito" class="btn btn-dorado">Conoce nuestro rol</a>
       </div>
 
-      <!-- Slide 2: Fraude -->
       <div class="hero-slide">
         <span class="tag">Prevención · Anticorrupción</span>
         <h1>Cerramos las puertas al <span class="dorado">fraude</span> antes de que ocurra.</h1>
@@ -970,7 +1514,6 @@
         <a href="#" data-tab-link="fraude" class="btn btn-dorado">Ver prevención</a>
       </div>
 
-      <!-- Slide 3: COSO -->
       <div class="hero-slide">
         <span class="tag">COSO 2013 · COSO ERM 2017</span>
         <h1>Un sistema de control que <span class="dorado">se adapta y evoluciona</span> contigo.</h1>
@@ -978,7 +1521,6 @@
         <a href="#" data-tab-link="coso" class="btn btn-dorado">Explorar COSO</a>
       </div>
 
-      <!-- Slide 4: Tres Líneas -->
       <div class="hero-slide">
         <span class="tag">Modelo IIA · Gobernanza</span>
         <h1>Somos la <span class="dorado">Segunda Línea de Defensa</span>: supervisamos sin suplantar.</h1>
@@ -986,7 +1528,6 @@
         <a href="#" data-tab-link="tres-lineas" class="btn btn-dorado">Ver las 3 Líneas</a>
       </div>
 
-      <!-- Slide 5: Procesos -->
       <div class="hero-slide">
         <span class="tag">Metodología · Mejora continua</span>
         <h1>Metodología clara: <span class="dorado">tú documentas, nosotros te guiamos</span>.</h1>
@@ -994,7 +1535,6 @@
         <a href="#" data-tab-link="procesos" class="btn btn-dorado">Ver procesos</a>
       </div>
 
-      <!-- Slide 6: Beneficios -->
       <div class="hero-slide">
         <span class="tag">Lo que ganas con nosotros</span>
         <h1>Operación blindada, <span class="dorado">decisiones más rápidas</span>, procesos más ágiles.</h1>
@@ -1002,7 +1542,6 @@
         <a href="#" data-tab-link="beneficios" class="btn btn-dorado">Ver beneficios</a>
       </div>
 
-      <!-- Slide 7: Transformación -->
       <div class="hero-slide">
         <span class="tag">La transformación</span>
         <h1>De <span class="dorado">riesgos detectados tarde</span> a riesgos anticipados con KRIs.</h1>
@@ -1010,7 +1549,6 @@
         <a href="#" data-tab-link="antes-despues" class="btn btn-dorado">Ver transformación</a>
       </div>
 
-      <!-- Slide 8: Contacto -->
       <div class="hero-slide">
         <span class="tag">Canales de atención</span>
         <h1>¿Necesitas apoyo en <span class="dorado">riesgos, controles o documentación</span>?</h1>
@@ -1031,15 +1569,25 @@
     </div>
     <div class="hero-right reveal-right">
       <div class="hero-circle">
-        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Control Interno COMA">
+        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Control Interno">
       </div>
       <div class="circle-deco dorado" style="width:140px;height:140px;top:-30px;right:-30px;opacity:.9;"></div>
       <div class="circle-deco gris" style="width:200px;height:200px;bottom:-50px;left:-50px;opacity:.5;"></div>
     </div>
   </div>
+
+  <div class="wrap home-editable reveal">
+    <div class="editable-card" id="editableCard">
+      <div class="editable-card-title">
+        <i class="fas fa-quote-left"></i> Mensaje del Departamento
+      </div>
+      <img id="editableImage" class="editable-image hidden" alt="Imagen personalizada">
+      <p id="editableText" class="editable-text">El control interno somos todos: la excelencia colectiva existe únicamente cuando cada uno se hace cargo de su metro cuadrado.</p>
+    </div>
+  </div>
 </header>
 
-<!-- ===== MÉTRICAS (introducción) ===== -->
+<!-- ===== MÉTRICAS ===== -->
 <section class="metrics" id="metricsHome">
   <div class="wrap">
     <div class="metrics-grid">
@@ -1063,12 +1611,9 @@
   </div>
 </section>
 
-<!-- ===== ANCLA DE TABS ===== -->
 <div class="tabs-anchor" id="tabsAnchor"></div>
 
-<!-- ============================================= -->
-<!-- TAB 1: PROPÓSITO -->
-<!-- ============================================= -->
+<!-- ===== TAB 1: PROPÓSITO ===== -->
 <section class="tab-panel features" data-tab="proposito">
   <div class="wrap">
     <div class="section-head reveal">
@@ -1106,9 +1651,7 @@
   </div>
 </section>
 
-<!-- ============================================= -->
-<!-- TAB 2: TRES LÍNEAS -->
-<!-- ============================================= -->
+<!-- ===== TAB 2: TRES LÍNEAS ===== -->
 <section class="tab-panel alt-block" data-tab="tres-lineas">
   <div class="wrap alt-inner">
     <div class="alt-media reveal-left">
@@ -1124,9 +1667,7 @@
   </div>
 </section>
 
-<!-- ============================================= -->
-<!-- TAB 3: EXPERTOS (TIMELINE) -->
-<!-- ============================================= -->
+<!-- ===== TAB 3: EXPERTOS (TIMELINE) ===== -->
 <section class="tab-panel experts" data-tab="expertos">
   <div class="wrap">
     <div class="section-head reveal">
@@ -1180,9 +1721,7 @@
   </div>
 </section>
 
-<!-- ============================================= -->
-<!-- TAB 4: COSO -->
-<!-- ============================================= -->
+<!-- ===== TAB 4: COSO ===== -->
 <section class="tab-panel network" data-tab="coso">
   <div class="wrap network-inner">
     <div class="network-media reveal-left">
@@ -1233,9 +1772,7 @@
   </div>
 </section>
 
-<!-- ============================================= -->
-<!-- TAB 5: PROCESOS / ROLES -->
-<!-- ============================================= -->
+<!-- ===== TAB 5: PROCESOS ===== -->
 <section class="tab-panel roles" data-tab="procesos">
   <div class="wrap">
     <div class="section-head reveal">
@@ -1334,9 +1871,7 @@
   </div>
 </section>
 
-<!-- ============================================= -->
-<!-- TAB 6: BENEFICIOS -->
-<!-- ============================================= -->
+<!-- ===== TAB 6: BENEFICIOS ===== -->
 <section class="tab-panel benefits" data-tab="beneficios">
   <div class="wrap">
     <div class="section-head reveal">
@@ -1346,31 +1881,26 @@
       <div class="divider"></div>
     </div>
     <div class="benefits-grid">
-
       <article class="benefit-card reveal">
         <div class="benefit-icon"><i class="fas fa-lock"></i></div>
         <h3>Operación blindada</h3>
         <p>Anticipamos riesgos y fraudes antes de que toquen tu área.</p>
       </article>
-
       <article class="benefit-card reveal">
         <div class="benefit-icon"><i class="fas fa-bolt"></i></div>
         <h3>Decisiones más rápidas</h3>
         <p>Información confiable y metodología clara para que decidas sin frenos.</p>
       </article>
-
       <article class="benefit-card reveal">
         <div class="benefit-icon"><i class="fas fa-chart-line"></i></div>
         <h3>Procesos más ágiles</h3>
         <p>Detectamos cuellos de botella y eliminamos retrabajos.</p>
       </article>
-
       <article class="benefit-card reveal">
         <div class="benefit-icon"><i class="fas fa-handshake"></i></div>
         <h3>Acompañamiento real</h3>
         <p>No te dejamos solo: te damos herramientas, capacitación y soporte.</p>
       </article>
-
     </div>
     <div style="text-align:center;margin-top:50px;" class="reveal">
       <a href="#" data-tab-link="contacto" class="btn btn-dorado">Agenda una asesoría con nosotros</a>
@@ -1378,9 +1908,7 @@
   </div>
 </section>
 
-<!-- ============================================= -->
-<!-- TAB 7: ANTES VS DESPUÉS -->
-<!-- ============================================= -->
+<!-- ===== TAB 7: ANTES VS DESPUÉS ===== -->
 <section class="tab-panel before-after" data-tab="antes-despues">
   <div class="wrap">
     <div class="section-head reveal">
@@ -1428,9 +1956,7 @@
   </div>
 </section>
 
-<!-- ============================================= -->
-<!-- TAB 8: FRAUDE -->
-<!-- ============================================= -->
+<!-- ===== TAB 8: FRAUDE ===== -->
 <section class="tab-panel invest" data-tab="fraude">
   <div class="wrap">
     <div class="section-head reveal">
@@ -1468,9 +1994,7 @@
   </div>
 </section>
 
-<!-- ============================================= -->
-<!-- TAB 9: FAQ -->
-<!-- ============================================= -->
+<!-- ===== TAB 9: FAQ ===== -->
 <section class="tab-panel faq-section" data-tab="faq">
   <div class="wrap">
     <div class="section-head reveal">
@@ -1610,9 +2134,7 @@
   </div>
 </section>
 
-<!-- ============================================= -->
-<!-- TAB 10: CONTACTO -->
-<!-- ============================================= -->
+<!-- ===== TAB 10: CONTACTO ===== -->
 <section class="tab-panel cta-final" data-tab="contacto">
   <div class="wrap cta-inner">
     <div class="cta-content reveal-left">
@@ -1651,17 +2173,107 @@
 </section>
 
 <footer>
-  <strong>Control Interno · COMA</strong>
-  Segunda Línea de Defensa · Gestión de Riesgos · Prevención de Fraudes · Mejora Continua
-  <p style="margin-top:14px;font-size:.78rem;">CM-PLG-CONTCI-01 · Manual de Control Interno · Contraloría · Gobierno Corporativo</p>
+  <span class="footer-brand">Departamento de Control Interno</span>
+  <p class="footer-manifesto">
+    El control interno somos todos: la excelencia colectiva existe únicamente cuando cada uno se hace cargo de su metro cuadrado.
+  </p>
+
+  <!-- Firma de autoría - doble clic para abrir el panel de configuración -->
+  <div class="footer-signature" id="footerSignature" title="">
+    <img src="https://raw.githubusercontent.com/internalcontrolengineering/Desarrollos/main/LogoCI-G.png" alt="Control Interno">
+    <div class="sep"></div>
+    <div class="sig-block">
+      <span class="sig-title">Control Interno</span>
+      <span class="sig-sub">Ingeniería de Control</span>
+    </div>
+    <div class="sep"></div>
+    <div class="sig-block">
+      <span class="sig-title">Departamento de Control Interno</span>
+      <span class="sig-sub">V1.0 | Septiembre 2026</span>
+    </div>
+  </div>
 </footer>
 
 <!-- BACK TO TOP -->
 <button class="back-top" id="backTop" aria-label="Volver arriba">↑</button>
 
-<!-- ============================================= -->
-<!-- SIDEBAR LATERAL DERECHO -->
-<!-- ============================================= -->
+<!-- ===== MODAL DE CONTRASEÑA ===== -->
+<div class="password-modal" id="passwordModal">
+  <div class="password-modal-inner" id="passwordModalInner">
+    <div class="password-modal-header">
+      <div class="password-modal-icon">
+        <i class="fas fa-lock"></i>
+      </div>
+      <h3>Acceso restringido</h3>
+    </div>
+    <div class="password-modal-body">
+      <p>Ingresa la contraseña para acceder a la personalización del home.</p>
+      <div class="password-input-wrap">
+        <input type="password" class="password-input" id="passwordInput" placeholder="• • • • • • • •" maxlength="32" autocomplete="off">
+        <button type="button" class="password-toggle" id="passwordToggle" aria-label="Mostrar u ocultar contraseña">
+          <i class="fas fa-eye"></i>
+        </button>
+      </div>
+      <div class="password-error" id="passwordError">Contraseña incorrecta. Intenta de nuevo.</div>
+      <div class="password-actions">
+        <button class="btn-cancel" id="passwordCancel">Cancelar</button>
+        <button class="btn-unlock" id="passwordUnlock">Desbloquear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL DE CONFIGURACIÓN ===== -->
+<div class="config-modal" id="configModal">
+  <div class="config-modal-inner">
+    <div class="config-modal-header">
+      <h3><i class="fas fa-sliders-h"></i> Personalizar home</h3>
+      <button class="config-modal-close" id="configClose" aria-label="Cerrar">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="config-modal-body">
+
+      <div class="config-tab-switch">
+        <button class="config-tab-btn active" data-config-tab="text">
+          <i class="fas fa-align-left"></i> Texto
+        </button>
+        <button class="config-tab-btn" data-config-tab="image">
+          <i class="fas fa-image"></i> Imagen
+        </button>
+      </div>
+
+      <div class="config-panel active" data-config-panel="text">
+        <label class="config-label" for="configTextarea">Mensaje del departamento</label>
+        <textarea class="config-textarea" id="configTextarea" placeholder="Escribe el mensaje que quieres mostrar en el home...">El control interno somos todos: la excelencia colectiva existe únicamente cuando cada uno se hace cargo de su metro cuadrado.</textarea>
+      </div>
+
+      <div class="config-panel" data-config-panel="image">
+        <label class="config-label">Imagen personalizada</label>
+        <div class="config-file-zone" id="configFileZone">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Haz clic o arrastra una imagen aquí</p>
+          <small>JPG, PNG, WEBP · Máx 5 MB</small>
+          <input type="file" id="configFileInput" accept="image/*">
+        </div>
+        <div class="config-preview" id="configPreview">
+          <div class="config-preview-empty">Sin imagen seleccionada</div>
+        </div>
+      </div>
+
+      <div class="config-actions">
+        <button class="btn-clear" id="configClear" title="Quitar imagen y restaurar texto">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        <button class="btn-cancel" id="configCancel">Cancelar</button>
+        <button class="btn-save" id="configSave">Guardar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== SIDEBAR LATERAL DERECHO ===== -->
 <div class="side-trigger" id="sideTrigger"></div>
 
 <div class="side-hint" id="sideHint">
@@ -1702,40 +2314,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const dots = document.querySelectorAll('.hero-dot');
   let currentSlide = 0;
   let slideInterval = null;
-  const SLIDE_DURATION = 2000; // ✅ 2 segundos
+  const SLIDE_DURATION = 2000;
 
   function goToSlide(index) {
     slides.forEach((s, i) => s.classList.toggle('active', i === index));
     dots.forEach((d, i) => d.classList.toggle('active', i === index));
     currentSlide = index;
   }
-
-  function nextSlide() {
-    goToSlide((currentSlide + 1) % slides.length);
-  }
-
+  function nextSlide() { goToSlide((currentSlide + 1) % slides.length); }
   function startCarousel() {
     stopCarousel();
     if (slides.length === 0) return;
-    slideInterval = setInterval(nextSlide, SLIDE_DURATION); // ✅ sin pausa
+    slideInterval = setInterval(nextSlide, SLIDE_DURATION);
   }
-
   function stopCarousel() {
-    if (slideInterval) {
-      clearInterval(slideInterval);
-      slideInterval = null;
-    }
+    if (slideInterval) { clearInterval(slideInterval); slideInterval = null; }
   }
 
-  // Click en dots
   dots.forEach((dot, i) => {
     dot.addEventListener('click', () => {
       goToSlide(i);
       startCarousel();
     });
   });
-
-  // ✅ Iniciar el carrusel al cargar
   startCarousel();
 
   /* ===== REVEAL OBSERVER ===== */
@@ -1763,8 +2364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function update(now) {
           const progress = Math.min((now - start) / duration, 1);
           const eased = 1 - Math.pow(1 - progress, 3);
-          const value = Math.round(eased * target);
-          el.textContent = value + suffix;
+          el.textContent = Math.round(eased * target) + suffix;
           if (progress < 1) requestAnimationFrame(update);
         }
         requestAnimationFrame(update);
@@ -1851,7 +2451,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnInicio.classList.add('hidden');
     sideButtons.forEach(b => b.classList.remove('active'));
     activeTab = null;
-    goToSlide(0); // ✅ reiniciar al slide 1
+    goToSlide(0);
     history.pushState({tab: null}, '', '#');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     startCarousel();
@@ -1859,7 +2459,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showTab(tabId, push = true){
     if(tabId === activeTab) return;
-
     const next = document.querySelector(`.tab-panel[data-tab="${tabId}"]`);
     if(!next) return;
 
@@ -1875,16 +2474,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
       next.classList.add('active');
-
       next.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
         el.classList.remove('visible');
       });
-
       setTimeout(() => {
         next.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
           el.classList.add('visible');
         });
-
         next.querySelectorAll('.bar-fill').forEach(bar => {
           bar.style.width = '0';
           setTimeout(() => { bar.style.width = bar.dataset.width; }, 150);
@@ -1902,7 +2498,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if(push){
       history.pushState({tab: tabId}, '', `#${tabId}`);
     }
-
     scrollToTabs();
   }
 
@@ -1952,8 +2547,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const sidePanel = document.getElementById('sidePanel');
   const sideHint = document.getElementById('sideHint');
   let hideTimeout;
-
-  // Detectar si es táctil (móvil/tablet)
   const isTouch = window.matchMedia('(hover: none)').matches;
 
   function openSide(){
@@ -1961,7 +2554,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sidePanel.classList.add('open');
     sideHint.classList.add('hidden');
   }
-
   function closeSide(){
     hideTimeout = setTimeout(() => {
       sidePanel.classList.remove('open');
@@ -1969,18 +2561,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 400);
   }
 
-  // Desktop: hover
   sideTrigger.addEventListener('mouseenter', openSide);
   sidePanel.addEventListener('mouseenter', openSide);
   sidePanel.addEventListener('mouseleave', closeSide);
   sideTrigger.addEventListener('mouseleave', closeSide);
   sideHint.addEventListener('mouseenter', openSide);
 
-  // Táctil (móvil/tablet): tap para abrir/cerrar
   if (isTouch) {
     sideHint.style.pointerEvents = 'auto';
     sideHint.style.cursor = 'pointer';
-
     sideHint.addEventListener('click', (e) => {
       e.stopPropagation();
       if (sidePanel.classList.contains('open')) {
@@ -1989,15 +2578,11 @@ document.addEventListener('DOMContentLoaded', () => {
         openSide();
       }
     });
-
-    // Cerrar al tocar un botón del panel
     sidePanel.querySelectorAll('button').forEach(btn => {
       btn.addEventListener('click', () => {
         setTimeout(closeSide, 200);
       });
     });
-
-    // Cerrar al tocar fuera del panel
     document.addEventListener('click', (e) => {
       if (sidePanel.classList.contains('open') &&
           !sidePanel.contains(e.target) &&
@@ -2006,6 +2591,247 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  /* ============================================= */
+  /* CONFIGURACIÓN (protegida con contraseña)      */
+  /* Doble clic en la firma del footer             */
+  /* ============================================= */
+  const PASSWORD = 'ControlInterno2026';
+
+  const footerSignature = document.getElementById('footerSignature');
+  const passwordModal = document.getElementById('passwordModal');
+  const passwordModalInner = document.getElementById('passwordModalInner');
+  const passwordInput = document.getElementById('passwordInput');
+  const passwordToggle = document.getElementById('passwordToggle');
+  const passwordCancel = document.getElementById('passwordCancel');
+  const passwordUnlock = document.getElementById('passwordUnlock');
+  const passwordError = document.getElementById('passwordError');
+
+  const configModal = document.getElementById('configModal');
+  const configClose = document.getElementById('configClose');
+  const configCancel = document.getElementById('configCancel');
+  const configSave = document.getElementById('configSave');
+  const configClear = document.getElementById('configClear');
+  const configTextarea = document.getElementById('configTextarea');
+  const configFileZone = document.getElementById('configFileZone');
+  const configFileInput = document.getElementById('configFileInput');
+  const configPreview = document.getElementById('configPreview');
+
+  const editableText = document.getElementById('editableText');
+  const editableImage = document.getElementById('editableImage');
+
+  const STORAGE_KEY = 'ci_home_custom_v1';
+
+  let pendingImageData = null;
+  let removeImageFlag = false;
+
+  /* ====== ABRIR MODAL DE CONTRASEÑA (doble clic) ====== */
+  footerSignature.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+    openPasswordModal();
+  });
+
+  function openPasswordModal(){
+    passwordInput.value = '';
+    passwordError.classList.remove('show');
+    passwordInput.type = 'password';
+    passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
+    passwordModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => passwordInput.focus(), 200);
+  }
+
+  function closePasswordModal(){
+    passwordModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  /* ====== MOSTRAR / OCULTAR CONTRASEÑA ====== */
+  passwordToggle.addEventListener('click', () => {
+    if(passwordInput.type === 'password'){
+      passwordInput.type = 'text';
+      passwordToggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
+    } else {
+      passwordInput.type = 'password';
+      passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
+    }
+  });
+
+  /* ====== VALIDAR CONTRASEÑA ====== */
+  function tryUnlock(){
+    const value = passwordInput.value;
+    if(value === PASSWORD){
+      closePasswordModal();
+      setTimeout(openConfig, 250);
+    } else {
+      passwordError.classList.add('show');
+      passwordModalInner.classList.remove('shake');
+      void passwordModalInner.offsetWidth;
+      passwordModalInner.classList.add('shake');
+      passwordInput.value = '';
+      passwordInput.focus();
+    }
+  }
+
+  passwordUnlock.addEventListener('click', tryUnlock);
+  passwordInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') tryUnlock();
+  });
+  passwordCancel.addEventListener('click', closePasswordModal);
+  passwordModal.addEventListener('click', (e) => {
+    if(e.target === passwordModal) closePasswordModal();
+  });
+
+  /* ============================================= */
+  /* CONFIGURACIÓN (texto / imagen)                */
+  /* ============================================= */
+  function loadSavedConfig(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return;
+      const data = JSON.parse(raw);
+      if(data.text){
+        editableText.textContent = data.text;
+        configTextarea.value = data.text;
+      }
+      if(data.image){
+        editableImage.src = data.image;
+        editableImage.classList.remove('hidden');
+        editableText.classList.add('hidden');
+        configPreview.innerHTML = '<img src="' + data.image + '" alt="Preview">';
+        pendingImageData = data.image;
+      }
+    } catch(err){ console.warn('Config load error:', err); }
+  }
+
+  function openConfig(){
+    removeImageFlag = false;
+    pendingImageData = null;
+    configTextarea.value = editableText.textContent.trim();
+    if(!editableImage.classList.contains('hidden')){
+      configPreview.innerHTML = '<img src="' + editableImage.src + '" alt="Preview">';
+      pendingImageData = editableImage.src;
+    } else {
+      configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
+    }
+    configModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeConfig(){
+    configModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  configClose.addEventListener('click', closeConfig);
+  configCancel.addEventListener('click', closeConfig);
+  configModal.addEventListener('click', (e) => {
+    if(e.target === configModal) closeConfig();
+  });
+
+  document.querySelectorAll('.config-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.configTab;
+      document.querySelectorAll('.config-tab-btn').forEach(b => {
+        b.classList.toggle('active', b === btn);
+      });
+      document.querySelectorAll('.config-panel').forEach(p => {
+        p.classList.toggle('active', p.dataset.configPanel === target);
+      });
+    });
+  });
+
+  configFileZone.addEventListener('click', () => configFileInput.click());
+  configFileZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    configFileZone.classList.add('dragover');
+  });
+  configFileZone.addEventListener('dragleave', () => {
+    configFileZone.classList.remove('dragover');
+  });
+  configFileZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    configFileZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if(file) handleFile(file);
+  });
+  configFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(file) handleFile(file);
+  });
+
+  function handleFile(file){
+    if(!file.type.startsWith('image/')){
+      alert('Por favor selecciona un archivo de imagen válido.');
+      return;
+    }
+    if(file.size > 5 * 1024 * 1024){
+      alert('La imagen no debe pesar más de 5 MB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      pendingImageData = evt.target.result;
+      removeImageFlag = false;
+      configPreview.innerHTML = '<img src="' + pendingImageData + '" alt="Preview">';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  configSave.addEventListener('click', () => {
+    const newText = configTextarea.value.trim();
+    const data = {};
+
+    if(newText){
+      data.text = newText;
+      editableText.textContent = newText;
+    }
+    if(pendingImageData && !removeImageFlag){
+      data.image = pendingImageData;
+      editableImage.src = pendingImageData;
+      editableImage.classList.remove('hidden');
+      editableText.classList.add('hidden');
+    } else if(removeImageFlag){
+      editableImage.classList.add('hidden');
+      editableImage.src = '';
+      editableText.classList.remove('hidden');
+      if(newText) editableText.textContent = newText;
+    } else if(newText){
+      editableImage.classList.add('hidden');
+      editableImage.src = '';
+      editableText.classList.remove('hidden');
+      editableText.textContent = newText;
+    }
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch(err){ console.warn('Config save error:', err); }
+
+    closeConfig();
+  });
+
+  configClear.addEventListener('click', () => {
+    const confirmed = confirm('¿Quitar la imagen personalizada y restaurar el mensaje por defecto?');
+    if(!confirmed) return;
+    removeImageFlag = true;
+    pendingImageData = null;
+    configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
+    configFileInput.value = '';
+    const defaultText = 'El control interno somos todos: la excelencia colectiva existe únicamente cuando cada uno se hace cargo de su metro cuadrado.';
+    configTextarea.value = defaultText;
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch(err){}
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){
+      if(configModal.classList.contains('open')) closeConfig();
+      else if(passwordModal.classList.contains('open')) closePasswordModal();
+    }
+  });
+
+  loadSavedConfig();
 
 });
 </script>
