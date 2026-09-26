@@ -230,7 +230,7 @@
   .config-modal{
     position:fixed;
     inset:0;
-    z-index:1300;
+    z-index:2200;
     background:rgba(15,15,15,.7);
     backdrop-filter:blur(6px);
     -webkit-backdrop-filter:blur(6px);
@@ -444,7 +444,7 @@
   .password-modal{
     position:fixed;
     inset:0;
-    z-index:1400;
+    z-index:2100;
     background:rgba(15,15,15,.75);
     backdrop-filter:blur(8px);
     -webkit-backdrop-filter:blur(8px);
@@ -1691,6 +1691,83 @@
     .tab-panel[data-tab="tres-lineas"] .alt-media{order:-1}
   }
 
+
+  .maintenance-logo{
+    width:88px;height:88px;object-fit:contain;margin:0 auto 18px;
+    filter:drop-shadow(0 8px 20px rgba(201,162,39,.35));
+  }
+  .maint-admin-btn{
+    margin-top:32px;
+    width:42px;height:42px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.04);
+    color:rgba(255,255,255,.35);
+    font-size:0.95rem;
+    cursor:pointer;transition:all .25s;
+    display:inline-grid;place-items:center;
+    padding:0;
+  }
+  .maint-admin-btn:hover{
+    color:var(--dorado);
+    border-color:rgba(201,162,39,.45);
+    background:rgba(201,162,39,.1);
+    transform:scale(1.08);
+  }
+  .maint-admin-btn:focus{
+    outline:none;
+    color:var(--dorado);
+    border-color:rgba(201,162,39,.5);
+  }
+  .maintenance-logo{
+    width:100px;height:100px;object-fit:contain;margin:0 auto 20px;
+    filter:drop-shadow(0 8px 24px rgba(201,162,39,.4));
+  }
+  .config-maint-btn{
+    width:100%;margin-top:12px;margin-bottom:4px;
+    padding:14px 18px;border-radius:12px;border:2px solid rgba(198,40,40,.35);
+    background:rgba(198,40,40,.08);color:var(--rojo);
+    font-family:inherit;font-size:.78rem;font-weight:800;letter-spacing:.1em;
+    text-transform:uppercase;cursor:pointer;transition:all .25s;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+  }
+  .config-maint-btn:hover{background:rgba(198,40,40,.14);transform:translateY(-1px)}
+  .config-maint-btn.is-on{
+    background:linear-gradient(135deg,#c62828,#8e0000);color:#fff;border-color:transparent;
+    box-shadow:0 8px 20px rgba(198,40,40,.35);
+  }
+  .config-maint-btn.is-on:hover{filter:brightness(1.08)}
+
+
+  .password-modal-logo{
+    width:64px;height:64px;object-fit:contain;margin:0 auto 14px;
+    filter:drop-shadow(0 4px 12px rgba(201,162,39,.4));
+  }
+
+
+  /* Nunca mostrar contornos punteados fuera del modo edición */
+  body:not(.cms-editing) [data-cms-key],
+  body:not(.cms-editing) [contenteditable] {
+    outline: none !important;
+    outline-offset: 0 !important;
+  }
+
+
+  body.cms-editing .cms-controls{
+    display:flex !important;
+    position:relative;
+    z-index:50;
+    pointer-events:auto !important;
+  }
+  body.cms-editing .cms-controls button{
+    pointer-events:auto !important;
+    position:relative;
+    z-index:51;
+  }
+  body.cms-editing [contenteditable="true"]{
+    -webkit-user-modify:read-write;
+    word-break:break-word;
+  }
+
 </style>
 </head>
 <body>
@@ -2009,7 +2086,7 @@
   <div class="wrap">
     <div class="section-head reveal">
       <span class="section-tag">Nuestros procesos y roles</span>
-      <h2>Nuestras Funciones</h2>
+      <h2>Lo que hacemos y lo que NO hacemos</h2>
       <p>Claridad total sobre nuestro ámbito de competencia para evitar etiquetas y malentendidos.</p>
       <div class="divider"></div>
     </div>
@@ -2384,23 +2461,16 @@
         <li>Reportes e informes de monitoreo</li>
         <li>Talleres y acompañamiento metodológico</li>
       </ul>
-      <a href="mailto:controlinterno@coma.com" class="btn btn-blanco">Escríbenos directamente</a>
     </div>
     <div class="cta-form reveal-right">
       <h3>Solicita asesoría o capacitación</h3>
       <form id="contactForm">
         <div class="form-group">
-          <input type="text" placeholder="Nombre" required>
+          <input type="text" id="contactName" name="nombre" placeholder="Nombre" required autocomplete="name">
         </div>
         <div class="form-group">
-          <input type="email" placeholder="Correo electrónico" required>
+          <textarea id="contactRequest" name="solicitud" rows="4" placeholder="¿En qué necesitas apoyo?" required></textarea>
         </div>
-        <div class="form-group">
-          <textarea rows="3" placeholder="¿En qué necesitas apoyo?" required></textarea>
-        </div>
-        <label class="form-check">
-          <input type="checkbox" required> Acepto los términos del servicio
-        </label>
         <button type="submit" class="btn btn-blanco">Enviar solicitud</button>
       </form>
     </div>
@@ -2433,12 +2503,13 @@
 <!-- ===== OVERLAY MANTENIMIENTO ===== -->
 <div class="maintenance-overlay" id="maintenanceOverlay" aria-live="polite">
   <div class="maintenance-card">
+    <img src="https://raw.githubusercontent.com/internalcontrolengineering/Desarrollos/main/LogoCI-BC.png" alt="Control Interno" class="maintenance-logo">
     <div class="maintenance-icon"><i class="fas fa-tools"></i></div>
     <h2>Página en mantenimiento</h2>
     <p>Estamos actualizando el contenido del sitio. Vuelve en unos minutos.</p>
     <p class="maint-sub">Departamento de Control Interno · COMA</p>
-    <button type="button" id="maintAdminUnlock" style="margin-top:28px;padding:12px 22px;border-radius:40px;border:1.5px solid rgba(201,162,39,.5);background:transparent;color:var(--dorado);font-family:inherit;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">
-      Acceso administrador
+    <button type="button" id="maintAdminUnlock" class="maint-admin-btn" title="Acceso administrador" aria-label="Acceso administrador">
+      <i class="fas fa-lock"></i>
     </button>
   </div>
 </div>
@@ -2465,6 +2536,7 @@
 <div class="password-modal" id="passwordModal">
   <div class="password-modal-inner" id="passwordModalInner">
     <div class="password-modal-header">
+      <img src="https://raw.githubusercontent.com/internalcontrolengineering/Desarrollos/main/LogoCI-G.png" alt="Control Interno" class="password-modal-logo">
       <div class="password-modal-icon">
         <i class="fas fa-lock"></i>
       </div>
@@ -2528,6 +2600,11 @@
 
       <button type="button" class="config-full-edit-btn" id="btnFullEdit">
         <i class="fas fa-edit"></i> Editar toda la página
+      </button>
+
+      <button type="button" class="config-maint-btn" id="btnToggleMaint" title="Activar o desactivar el aviso de mantenimiento para visitantes">
+        <i class="fas fa-hard-hat"></i>
+        <span id="btnToggleMaintLabel">Activar página en mantenimiento</span>
       </button>
 
       <div class="config-actions">
@@ -2717,22 +2794,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* ===== FORM CONTACTO ===== */
+  /* ===== FORM CONTACTO → Outlook ===== */
   const contactForm = document.getElementById('contactForm');
   if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      const nombre = (document.getElementById('contactName') || {}).value || '';
+      const solicitud = (document.getElementById('contactRequest') || {}).value || '';
+      const name = String(nombre).trim();
+      const msg = String(solicitud).trim();
+      if (!name || !msg) return;
+
+      const to = 'jojeda@comasw.com,snduz@comasw.com';
+      const subject = encodeURIComponent('Solicitud de asesoría — Control Interno');
+      const body = encodeURIComponent(
+        'Nombre: ' + name + '\n\n' +
+        'Solicitud:\n' + msg + '\n'
+      );
+      // Abre Outlook / cliente de correo predeterminado
+      window.location.href = 'mailto:' + to + '?subject=' + subject + '&body=' + body;
+
       const btn = e.target.querySelector('button[type="submit"]');
-      const original = btn.textContent;
-      btn.textContent = '✓ Enviado';
-      btn.style.background = '#fff';
-      btn.style.color = 'var(--dorado-oscuro)';
-      setTimeout(() => {
-        btn.textContent = original;
-        btn.style.background = '';
-        btn.style.color = '';
-        e.target.reset();
-      }, 2500);
+      if (btn) {
+        const original = btn.textContent;
+        btn.textContent = '✓ Abriendo correo...';
+        setTimeout(() => { btn.textContent = original; }, 2000);
+      }
     });
   }
 
@@ -2936,6 +3023,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const configFileInput = document.getElementById('configFileInput');
   const configPreview = document.getElementById('configPreview');
   const btnFullEdit = document.getElementById('btnFullEdit');
+  const btnToggleMaint = document.getElementById('btnToggleMaint');
+  const btnToggleMaintLabel = document.getElementById('btnToggleMaintLabel');
 
   const editableText = document.getElementById('editableText');
   const editableImage = document.getElementById('editableImage');
@@ -2949,8 +3038,26 @@ document.addEventListener('DOMContentLoaded', () => {
   let pendingImageData = null;
   let removeImageFlag = false;
   let isEditMode = false;
+  let pageMaintenanceOn = false;
+  let adminSession = false; // true solo mientras el admin tiene el panel abierto
   let editorToken = localStorage.getItem(EDITOR_TOKEN_KEY) || null;
   let currentImgTarget = null;
+
+
+  function updateMaintToggleUI(on) {
+    pageMaintenanceOn = !!on;
+    if (!btnToggleMaint) return;
+    btnToggleMaint.classList.toggle('is-on', pageMaintenanceOn);
+    if (btnToggleMaintLabel) {
+      btnToggleMaintLabel.textContent = pageMaintenanceOn
+        ? 'Desactivar mantenimiento (página pública)'
+        : 'Activar página en mantenimiento';
+    }
+    var icon = btnToggleMaint.querySelector('i');
+    if (icon) {
+      icon.className = pageMaintenanceOn ? 'fas fa-check-circle' : 'fas fa-hard-hat';
+    }
+  }
 
   function showMaintenance(show) {
     if (!maintenanceOverlay) return;
@@ -3086,16 +3193,12 @@ document.addEventListener('DOMContentLoaded', () => {
         applyPageContent(pc);
       }
 
-      var isEditor = editorToken && data.editor_token && editorToken === data.editor_token;
-      // Si hay mantenimiento pero no hay editor activo (token vacío) o el token es nuestro, no bloquear
-      if (data.maintenance_mode && data.editor_token && !isEditor && !isEditMode) {
+      updateMaintToggleUI(!!data.maintenance_mode);
+      // Solo omitir overlay si hay sesión admin abierta o modo edición activo
+      if (data.maintenance_mode && !adminSession && !isEditMode) {
         showMaintenance(true);
       } else {
         showMaintenance(false);
-        // Limpieza: mantenimiento huérfano (activado pero sin editor)
-        if (data.maintenance_mode && !data.editor_token) {
-          upsertRow({ maintenance_mode: false, editor_token: null });
-        }
       }
     } catch (err) {
       console.warn(err);
@@ -3121,8 +3224,8 @@ document.addEventListener('DOMContentLoaded', () => {
             applyPageContent(pc);
           }
         }
-        var isEditor = editorToken && row.editor_token && editorToken === row.editor_token;
-        if (row.maintenance_mode && row.editor_token && !isEditor && !isEditMode) {
+        updateMaintToggleUI(!!row.maintenance_mode);
+        if (row.maintenance_mode && !adminSession && !isEditMode) {
           showMaintenance(true);
         } else {
           showMaintenance(false);
@@ -3132,15 +3235,60 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ===== MODO EDICIÓN ===== */
+
+  function stopButtonKeys(e) {
+    // En botones contenteditable, Space/Enter no deben "activar" el botón
+    // (el espacio lo inserta el listener global)
+    if (e.key === ' ' || e.code === 'Space' || e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+
+  // Espacio en cualquier contenteditable (por si el navegador lo bloquea)
+  document.addEventListener('keydown', function(e) {
+    if (!isEditMode && !window.__ciEditMode) return;
+    if (e.key !== ' ' && e.code !== 'Space') return;
+    var el = e.target;
+    if (!el) return;
+    if (el.isContentEditable || (el.closest && el.closest('[contenteditable="true"]'))) {
+      // No prevenir si ya es un input/textarea normal
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') return;
+      // Evitar scroll de página / activación de botón
+      e.preventDefault();
+      try {
+        document.execCommand('insertText', false, ' ');
+      } catch (err) {
+        var sel = window.getSelection();
+        if (sel && sel.rangeCount) {
+          var range = sel.getRangeAt(0);
+          range.deleteContents();
+          var node = document.createTextNode(' ');
+          range.insertNode(node);
+          range.setStartAfter(node);
+          range.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+      }
+    }
+  }, true);
+
   function enableEditingOnElements() {
     ensureCmsKeys();
 
-    // Textos: contenteditable agresivo
-    var textSel = 'h1,h2,h3,p,li,.tag,.section-tag,.role,.role-sub,.metric-label,.feature-card h3,.feature-card p,.faq-header,.faq-body p,.brand-text strong,.brand-text small,.footer-manifesto,.footer-brand,.cta-form h3,.ba-badge,.editable-text,.tl-content h3,.tl-content p,.coso-list h3,.coso-list p,.invest-item h3,.invest-item p,.benefit-card h3,.benefit-card p,.alt-card h2,.alt-card p,.network-content h2,.network-content > p,.cta-content h2,.cta-content p,.cta-content li,.section-head h2,.section-head p';
+    // Textos: contenteditable (evitar BUTTON nativos: la tecla espacio los "clickea")
+    var textSel = 'h1,h2,h3,p,li,.tag,.section-tag,.role,.role-sub,.metric-label,.feature-card h3,.feature-card p,.faq-body p,.brand-text strong,.brand-text small,.footer-manifesto,.footer-brand,.cta-form h3,.ba-badge,.editable-text,.tl-content h3,.tl-content p,.coso-list h3,.coso-list p,.invest-item h3,.invest-item p,.benefit-card h3,.benefit-card p,.alt-card h2,.alt-card p,.network-content h2,.network-content > p,.cta-content h2,.cta-content p,.cta-content li,.section-head h2,.section-head p,.faq-header';
     document.querySelectorAll(textSel).forEach(function(el) {
       if (el.closest('.config-modal,.password-modal,.edit-toolbar,.maintenance-overlay,.side-panel,.cms-controls')) return;
       if (!el.getAttribute('data-cms-key')) {
         el.setAttribute('data-cms-key', 'auto_' + Math.random().toString(36).slice(2, 9));
+      }
+      // Si es <button>, convertirlo temporalmente a div editable
+      if (el.tagName === 'BUTTON') {
+        el.setAttribute('data-cms-was-button', '1');
+        el.setAttribute('type', 'button');
+        el.addEventListener('keydown', stopButtonKeys);
       }
       el.setAttribute('contenteditable', 'true');
       el.setAttribute('spellcheck', 'true');
@@ -3224,6 +3372,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     upsertRow({ maintenance_mode: true, editor_token: editorToken });
+    updateMaintToggleUI(true);
   }
 
   function exitEditModeLocal() {
@@ -3267,6 +3416,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var ok = false;
     try { ok = await saveEverything(); } catch (e) { console.warn(e); }
     try { await upsertRow({ maintenance_mode: false, editor_token: null }); } catch (e) {}
+    updateMaintToggleUI(false);
     exitEditModeLocal();
     if (ok) {
       alert('✓ La página está actualizada.\nLos cambios ya son visibles para todos.');
@@ -3284,15 +3434,33 @@ document.addEventListener('DOMContentLoaded', () => {
       if (hl) {
         hl.innerHTML = content['__hero_left_html'].value;
         currentSlide = 0;
+        // Asegurar botones agregar/eliminar slide
+        if (!document.getElementById('cmsAddSlide')) {
+          var dotsEl = hl.querySelector('.hero-dots');
+          if (dotsEl) {
+            var ctrl = document.createElement('div');
+            ctrl.className = 'cms-controls';
+            ctrl.id = 'heroCmsControls';
+            ctrl.innerHTML = '<button type="button" class="cms-btn-add" id="cmsAddSlide"><i class="fas fa-plus"></i> Agregar slide</button><button type="button" class="cms-btn-del" id="cmsDelSlide"><i class="fas fa-trash"></i> Eliminar slide actual</button>';
+            dotsEl.parentNode.insertBefore(ctrl, dotsEl.nextSibling);
+          }
+        }
         rebuildDots();
         goToSlide(0);
-        // re-bind dot handlers already in rebuildDots
       }
     }
     if (content['__faq_list_html'] && content['__faq_list_html'].value) {
       var fl = document.querySelector('.faq-list');
       if (fl) {
         fl.innerHTML = content['__faq_list_html'].value;
+        if (!document.getElementById('cmsAddFaq')) {
+          var wrap = fl.parentNode;
+          var fc = document.createElement('div');
+          fc.className = 'cms-controls';
+          fc.id = 'faqCmsControls';
+          fc.innerHTML = '<button type="button" class="cms-btn-add" id="cmsAddFaq"><i class="fas fa-plus"></i> Agregar pregunta</button>';
+          wrap.insertBefore(fc, fl);
+        }
         // rebind FAQ accordion
         fl.querySelectorAll('.faq-header').forEach(function(header) {
           header.addEventListener('click', function() {
@@ -3359,72 +3527,130 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Agregar / eliminar slides
-  var cmsAddSlide = document.getElementById('cmsAddSlide');
-  var cmsDelSlide = document.getElementById('cmsDelSlide');
-  if (cmsAddSlide) {
-    cmsAddSlide.addEventListener('click', function(e) {
-      e.preventDefault();
-      var slides = getSlides();
-      var last = slides[slides.length - 1];
-      var dotsWrap = document.querySelector('.hero-dots');
-      if (!last || !dotsWrap) return;
-      var neo = last.cloneNode(true);
-      neo.classList.remove('active');
-      var tag = neo.querySelector('.tag');
-      var h1 = neo.querySelector('h1');
-      var p = neo.querySelector('p');
-      if (tag) tag.textContent = 'Nuevo slide';
-      if (h1) h1.innerHTML = 'Escribe aquí el <span class="dorado">título</span>';
-      if (p) p.textContent = 'Escribe aquí la descripción del slide.';
-      // quitar keys viejas para regenerar
-      neo.querySelectorAll('[data-cms-key]').forEach(function(el) { el.removeAttribute('data-cms-key'); });
-      dotsWrap.parentNode.insertBefore(neo, dotsWrap);
-      rebuildDots();
-      goToSlide(getSlides().length - 1);
-      if (isEditMode) enableEditingOnElements();
-    });
-  }
-  if (cmsDelSlide) {
-    cmsDelSlide.addEventListener('click', function(e) {
-      e.preventDefault();
-      var slides = getSlides();
-      if (slides.length <= 1) { alert('Debe quedar al menos un slide.'); return; }
-      if (!confirm('¿Eliminar el slide actual?')) return;
-      slides[currentSlide].remove();
-      rebuildDots();
-      goToSlide(Math.min(currentSlide, getSlides().length - 1));
-      if (isEditMode) enableEditingOnElements();
-    });
+  // Agregar / eliminar slides y FAQ (delegación: funciona aunque se reconstruya el DOM)
+  function cmsAddHeroSlide() {
+    var slides = getSlides();
+    var last = slides[slides.length - 1];
+    var dotsWrap = document.querySelector('.hero-dots');
+    if (!last || !dotsWrap) {
+      alert('No se encontró el carrusel para agregar un slide.');
+      return;
+    }
+    var neo = last.cloneNode(true);
+    neo.classList.remove('active');
+    var tag = neo.querySelector('.tag');
+    var h1 = neo.querySelector('h1');
+    var p = neo.querySelector('p');
+    if (tag) tag.textContent = 'Nuevo slide';
+    if (h1) h1.innerHTML = 'Escribe aquí el <span class="dorado">título</span>';
+    if (p) p.textContent = 'Escribe aquí la descripción del slide.';
+    neo.querySelectorAll('[data-cms-key]').forEach(function(el) { el.removeAttribute('data-cms-key'); });
+    dotsWrap.parentNode.insertBefore(neo, dotsWrap);
+    rebuildDots();
+    goToSlide(getSlides().length - 1);
+    if (isEditMode) enableEditingOnElements();
   }
 
-  // Agregar FAQ
-  var cmsAddFaq = document.getElementById('cmsAddFaq');
-  if (cmsAddFaq) {
-    cmsAddFaq.addEventListener('click', function(e) {
+  function cmsDeleteHeroSlide() {
+    var slides = getSlides();
+    if (slides.length <= 1) { alert('Debe quedar al menos un slide.'); return; }
+    if (!confirm('¿Eliminar el slide actual?')) return;
+    slides[currentSlide].remove();
+    rebuildDots();
+    goToSlide(Math.min(currentSlide, getSlides().length - 1));
+    if (isEditMode) enableEditingOnElements();
+  }
+
+  function cmsAddFaqItem() {
+    var list = document.querySelector('.faq-list');
+    if (!list) {
+      alert('No se encontró la lista de preguntas.');
+      return;
+    }
+    var item = document.createElement('div');
+    item.className = 'faq-item reveal visible';
+    item.innerHTML = '<button class="faq-header" type="button">Nueva pregunta — haz clic para editar<span class="faq-icon">+</span></button><div class="faq-body" style="max-height:none;padding-bottom:26px"><p><strong>Respuesta:</strong> Escribe aquí la respuesta.</p></div>';
+    list.appendChild(item);
+    item.classList.add('active');
+    if (isEditMode) enableEditingOnElements();
+  }
+
+  document.addEventListener('click', function(e) {
+    if (!isEditMode && !window.__ciEditMode) return;
+    var t = e.target;
+    if (!t || !t.closest) return;
+
+    var addSlide = t.closest('#cmsAddSlide');
+    var delSlide = t.closest('#cmsDelSlide');
+    var addFaq = t.closest('#cmsAddFaq');
+    var delFaq = t.closest('.cms-faq-del');
+
+    if (addSlide) {
       e.preventDefault();
-      var list = document.querySelector('.faq-list');
-      if (!list) return;
-      var item = document.createElement('div');
-      item.className = 'faq-item reveal visible';
-      item.innerHTML = '<button class="faq-header" type="button">Nueva pregunta — haz clic para editar<span class="faq-icon">+</span></button><div class="faq-body"><p><strong>Respuesta:</strong> Escribe aquí la respuesta.</p></div>';
-      list.appendChild(item);
-      var header = item.querySelector('.faq-header');
-      header.addEventListener('click', function() {
-        if (isEditMode) return; // en edición no togglear, solo editar texto
-        var body = item.querySelector('.faq-body');
-        var isActive = item.classList.contains('active');
-        document.querySelectorAll('.faq-item').forEach(function(other) {
-          other.classList.remove('active');
-          var b = other.querySelector('.faq-body');
-          if (b) b.style.maxHeight = null;
-        });
-        if (!isActive) {
-          item.classList.add('active');
-          if (body) body.style.maxHeight = body.scrollHeight + 'px';
-        }
+      e.stopPropagation();
+      cmsAddHeroSlide();
+      return;
+    }
+    if (delSlide) {
+      e.preventDefault();
+      e.stopPropagation();
+      cmsDeleteHeroSlide();
+      return;
+    }
+    if (addFaq) {
+      e.preventDefault();
+      e.stopPropagation();
+      cmsAddFaqItem();
+      return;
+    }
+    if (delFaq) {
+      e.preventDefault();
+      e.stopPropagation();
+      var item = delFaq.closest('.faq-item');
+      if (!item) return;
+      if (document.querySelectorAll('.faq-item').length <= 1) {
+        alert('Debe quedar al menos una pregunta.');
+        return;
+      }
+      if (confirm('¿Eliminar esta pregunta?')) item.remove();
+      return;
+    }
+  }, true);
+
+
+  if (btnToggleMaint) {
+    btnToggleMaint.addEventListener('click', async function(e) {
+      e.preventDefault();
+      var next = !pageMaintenanceOn;
+      btnToggleMaint.disabled = true;
+      var prevLabel = btnToggleMaintLabel ? btnToggleMaintLabel.textContent : '';
+      if (btnToggleMaintLabel) btnToggleMaintLabel.textContent = next ? 'Activando...' : 'Desactivando...';
+
+      // Al activar: mantenimiento ON y sin token de editor (todos ven el aviso, incluido quien activa)
+      // Al desactivar: mantenimiento OFF
+      var ok = await upsertRow({
+        maintenance_mode: next,
+        editor_token: null
       });
-      if (isEditMode) enableEditingOnElements();
+
+      if (ok) {
+        updateMaintToggleUI(next);
+        if (next) {
+          // Cerrar panel y expulsar a la pantalla de mantenimiento
+          adminSession = false;
+          configModal.classList.remove('open');
+          document.body.style.overflow = '';
+          showMaintenance(true);
+        } else {
+          // Página pública de nuevo
+          adminSession = true; // sigue en el panel
+          showMaintenance(false);
+        }
+      } else {
+        alert('No se pudo cambiar el estado. ¿Ejecutaste el SQL en Supabase?');
+        if (btnToggleMaintLabel) btnToggleMaintLabel.textContent = prevLabel;
+      }
+      btnToggleMaint.disabled = false;
     });
   }
 
@@ -3477,7 +3703,9 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ===== BYPASS MANTENIMIENTO (admin) ===== */
   var maintAdminBtn = document.getElementById('maintAdminUnlock');
   if (maintAdminBtn) {
-    maintAdminBtn.addEventListener('click', function() {
+    maintAdminBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
       openPasswordModal();
     });
   }
@@ -3493,9 +3721,12 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordError.classList.remove('show');
     passwordInput.type = 'password';
     passwordToggle.innerHTML = '<i class="fas fa-eye"></i>';
+    passwordModal.style.zIndex = '2100';
     passwordModal.classList.add('open');
     document.body.style.overflow = 'hidden';
-    setTimeout(function() { passwordInput.focus(); }, 200);
+    setTimeout(function() {
+      try { passwordInput.focus(); } catch (err) {}
+    }, 200);
   }
 
   function closePasswordModal() {
@@ -3516,10 +3747,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function tryUnlock() {
     if (passwordInput.value === PASSWORD) {
       closePasswordModal();
-      // Quitar overlay y limpiar mantenimiento huérfano
+      // Abrir panel admin SIN desactivar el mantenimiento en el servidor
+      adminSession = true;
       showMaintenance(false);
       isEditMode = false;
-      upsertRow({ maintenance_mode: false, editor_token: null });
       setTimeout(openConfig, 250);
     } else {
       passwordError.classList.add('show');
@@ -3557,6 +3788,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeConfig() {
     configModal.classList.remove('open');
     document.body.style.overflow = '';
+    adminSession = false;
+    // Si el mantenimiento sigue activo, volver a mostrar el aviso (también al admin)
+    if (pageMaintenanceOn && !isEditMode) {
+      showMaintenance(true);
+    }
   }
 
   configClose.addEventListener('click', closeConfig);
@@ -3619,8 +3855,11 @@ document.addEventListener('DOMContentLoaded', () => {
     var imageToSave = (pendingImageData && !removeImageFlag) ? pendingImageData : null;
     applyConfig(newText, imageToSave);
     var ok = await upsertRow({ content_text: newText, image_base64: imageToSave });
-    if (ok) closeConfig();
-    else alert('No se pudo guardar. ¿Ejecutaste el SQL en Supabase?');
+    if (ok) {
+      closeConfig(); // si hay mantenimiento activo, closeConfig muestra el aviso
+    } else {
+      alert('No se pudo guardar. ¿Ejecutaste el SQL en Supabase?');
+    }
   });
 
   configClear.addEventListener('click', async function() {
@@ -3641,6 +3880,20 @@ document.addEventListener('DOMContentLoaded', () => {
       else if (passwordModal.classList.contains('open')) closePasswordModal();
     }
   });
+
+
+  /* Limpiar bordes punteados residuales del modo edición */
+  function clearCmsOutlines() {
+    document.querySelectorAll('[style*="outline"], [contenteditable]').forEach(function(el) {
+      if (window.__ciEditMode) return;
+      el.style.outline = '';
+      el.style.outlineOffset = '';
+      el.removeAttribute('contenteditable');
+    });
+    document.body.classList.remove('cms-editing');
+  }
+  clearCmsOutlines();
+  setTimeout(clearCmsOutlines, 500);
 
   loadConfigFromSupabase();
   subscribeRealtime();
