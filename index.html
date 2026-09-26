@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Control Interno COMA | Gestión de Riesgos y Excelencia Operativa</title>
+<title>Control Interno | Gestión de Riesgos y Excelencia Operativa</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Nunito:wght@600;700;800;900&family=Quicksand:wght@500;600;700&family=Playfair+Display:wght@700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
@@ -111,9 +111,11 @@
     text-transform:uppercase;
     color:var(--texto-gris);
     font-weight:600;
-    display:flex;
+    display:flex !important;
     align-items:center;
     gap:10px;
+    visibility:visible !important;
+    opacity:1 !important;
   }
   .brand-text small::before{
     content:"";
@@ -1334,8 +1336,8 @@
     .brand{gap:10px}
     .brand-logo-wrap{width:64px;height:64px;border-radius:18px}
     .brand-logo{width:52px;height:52px}
-    .brand-text strong{font-size:1.1rem;font-family:'Quicksand',sans-serif;line-height:1.15}
-    .brand-text small{display:none}
+    .brand-text strong{font-size:1.05rem;font-family:'Quicksand',sans-serif;line-height:1.15}
+    .brand-text small{display:flex;font-size:.58rem;letter-spacing:.12em}
     .btn-inicio{padding:8px 14px;font-size:.6rem;gap:6px}
     .btn-inicio i{font-size:.75rem}
 
@@ -1768,6 +1770,48 @@
     word-break:break-word;
   }
 
+
+  /* ===== TOUCH / MÓVIL: menú de secciones ===== */
+  @media (hover: none), (max-width: 900px) {
+    .side-hint{
+      pointer-events:auto !important;
+      cursor:pointer;
+      width:44px;height:44px;
+      right:8px;
+      box-shadow:0 8px 24px rgba(201,162,39,.55);
+    }
+    .side-trigger{
+      width:28px;
+      /* zona táctil invisible en el borde derecho */
+    }
+    .side-panel{
+      max-height:80vh;
+      -webkit-overflow-scrolling:touch;
+      padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+    .side-panel-list button{
+      min-height:48px;
+      padding:12px 14px;
+      font-size:.88rem;
+      -webkit-tap-highlight-color:rgba(201,162,39,.25);
+    }
+    .btn, .btn-dorado, .btn-blanco, .feature-link, .hero-dot{
+      -webkit-tap-highlight-color:rgba(201,162,39,.2);
+      touch-action:manipulation;
+    }
+    .hero-dots{
+      gap:12px;
+      padding:8px 0;
+    }
+    .hero-dot{
+      width:14px;height:14px;
+      min-width:14px;
+    }
+  }
+  /* Evitar "clics fantasma" residuales sobre overlays */
+  .side-rail{pointer-events:none}
+  .side-rail .side-panel{pointer-events:auto}
+
 </style>
 </head>
 <body>
@@ -1798,7 +1842,7 @@
     <div class="hero-left reveal-left">
 
       <div class="hero-slide active">
-        <span class="tag">Segunda Línea de Defensa · COMA</span>
+        <span class="tag">Segunda Línea de Defensa </span>
         <h1>Estamos comprometidos con <span class="dorado">blindar la operación</span> para avanzar con certidumbre.</h1>
         <p>No somos un freno burocrático: somos el aliado estratégico que anticipa riesgos, previene fraudes y convierte el control en una ventaja operativa.</p>
         <a href="#" data-tab-link="proposito" class="btn btn-dorado">Conoce nuestro rol</a>
@@ -2507,7 +2551,7 @@
     <div class="maintenance-icon"><i class="fas fa-tools"></i></div>
     <h2>Página en mantenimiento</h2>
     <p>Estamos actualizando el contenido del sitio. Vuelve en unos minutos.</p>
-    <p class="maint-sub">Departamento de Control Interno · COMA</p>
+    <p class="maint-sub">Departamento de Control Interno </p>
     <button type="button" id="maintAdminUnlock" class="maint-admin-btn" title="Acceso administrador" aria-label="Acceso administrador">
       <i class="fas fa-lock"></i>
     </button>
@@ -2659,7 +2703,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ===== HERO CARRUSEL ===== */
   let currentSlide = 0;
   let slideInterval = null;
-  const SLIDE_DURATION = 2000;
+  const SLIDE_DURATION = 4000;
   // isEditMode se declara más abajo; usamos window flag temporal
   window.__ciEditMode = false;
 
@@ -2805,7 +2849,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const msg = String(solicitud).trim();
       if (!name || !msg) return;
 
-      const to = 'jojeda@comasw.com;snduz@comasw.com';
+      const to = 'jojeda@comasw.com,snduz@comasw.com';
       const subject = encodeURIComponent('Solicitud de asesoría — Control Interno');
       const body = encodeURIComponent(
         'Nombre: ' + name + '\n\n' +
@@ -2909,12 +2953,27 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: top, behavior: 'smooth' });
   }
 
-  tabLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const tabId = link.dataset.tabLink;
-      if(tabId) showTab(tabId);
-    });
+  // Delegación: funciona en PC, touch y tras reconstruir el carrusel (sin listeners "fantasma")
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest && e.target.closest('[data-tab-link]');
+    if (!link) return;
+    if (window.__ciEditMode) {
+      if (!link.closest('.side-panel')) {
+        e.preventDefault();
+        return;
+      }
+    }
+    e.preventDefault();
+    const tabId = link.getAttribute('data-tab-link');
+    if (tabId) {
+      showTab(tabId);
+      const sp = document.getElementById('sidePanel');
+      const sh = document.getElementById('sideHint');
+      if (sp && sp.classList.contains('open')) {
+        sp.classList.remove('open');
+        if (sh) sh.classList.remove('hidden');
+      }
+    }
   });
 
   btnInicio.addEventListener('click', showHome);
@@ -2942,55 +3001,77 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* ===== SIDEBAR LATERAL ===== */
+  /* ===== SIDEBAR LATERAL (PC hover + móvil touch) ===== */
   const sideTrigger = document.getElementById('sideTrigger');
   const sidePanel = document.getElementById('sidePanel');
   const sideHint = document.getElementById('sideHint');
   let hideTimeout;
-  const isTouch = window.matchMedia('(hover: none)').matches;
+  // Solo modo touch si el dispositivo NO tiene hover real (evita romper PCs con pantalla táctil)
+  const isTouchDevice = window.matchMedia('(hover: none)').matches;
 
   function openSide(){
     clearTimeout(hideTimeout);
-    sidePanel.classList.add('open');
-    sideHint.classList.add('hidden');
+    if (sidePanel) sidePanel.classList.add('open');
+    if (sideHint) sideHint.classList.add('hidden');
   }
-  function closeSide(){
-    hideTimeout = setTimeout(() => {
-      sidePanel.classList.remove('open');
-      sideHint.classList.remove('hidden');
-    }, 400);
+  function closeSide(immediate){
+    clearTimeout(hideTimeout);
+    const run = function(){
+      if (sidePanel) sidePanel.classList.remove('open');
+      if (sideHint) sideHint.classList.remove('hidden');
+    };
+    if (immediate) run();
+    else hideTimeout = setTimeout(run, isTouchDevice ? 150 : 400);
+  }
+  function toggleSide(e){
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    if (!sidePanel) return;
+    if (sidePanel.classList.contains('open')) closeSide(true);
+    else openSide();
   }
 
-  sideTrigger.addEventListener('mouseenter', openSide);
-  sidePanel.addEventListener('mouseenter', openSide);
-  sidePanel.addEventListener('mouseleave', closeSide);
-  sideTrigger.addEventListener('mouseleave', closeSide);
-  sideHint.addEventListener('mouseenter', openSide);
+  // PC: hover (como antes)
+  if (sideTrigger) {
+    sideTrigger.addEventListener('mouseenter', openSide);
+    sideTrigger.addEventListener('mouseleave', function(){ closeSide(false); });
+  }
+  if (sidePanel) {
+    sidePanel.addEventListener('mouseenter', openSide);
+    sidePanel.addEventListener('mouseleave', function(){ closeSide(false); });
+  }
+  if (sideHint) {
+    sideHint.addEventListener('mouseenter', openSide);
+  }
 
-  if (isTouch) {
+  // Móvil / touch: tap en el chevron (además del hover en PC)
+  if (sideHint) {
     sideHint.style.pointerEvents = 'auto';
     sideHint.style.cursor = 'pointer';
-    sideHint.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (sidePanel.classList.contains('open')) {
-        closeSide();
-      } else {
-        openSide();
-      }
+    sideHint.addEventListener('click', function(e){
+      if (isTouchDevice) toggleSide(e);
     });
-    sidePanel.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        setTimeout(closeSide, 200);
-      });
-    });
-    document.addEventListener('click', (e) => {
-      if (sidePanel.classList.contains('open') &&
-          !sidePanel.contains(e.target) &&
-          !sideHint.contains(e.target)) {
-        closeSide();
-      }
-    });
+    sideHint.addEventListener('touchend', function(e){
+      if (!isTouchDevice) return;
+      e.preventDefault();
+      toggleSide(e);
+    }, { passive: false });
   }
+  if (sideTrigger && isTouchDevice) {
+    sideTrigger.addEventListener('click', toggleSide);
+    sideTrigger.addEventListener('touchend', function(e){
+      e.preventDefault();
+      toggleSide(e);
+    }, { passive: false });
+  }
+
+  // Cerrar al tocar fuera
+  document.addEventListener('click', function(e){
+    if (!sidePanel || !sidePanel.classList.contains('open')) return;
+    if (sidePanel.contains(e.target)) return;
+    if (sideHint && sideHint.contains(e.target)) return;
+    if (sideTrigger && sideTrigger.contains(e.target)) return;
+    closeSide(true);
+  });
 
   /* ============================================= */
   /* SUPABASE + CMS + MANTENIMIENTO (versión simple) */
@@ -3502,14 +3583,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, true);
 
-  // Evitar que los links naveguen en modo edición
+  // Evitar navegación accidental de links en modo edición (sin bloquear menú lateral)
   document.addEventListener('click', function(e) {
-    if (!isEditMode) return;
+    if (!isEditMode && !window.__ciEditMode) return;
     var a = e.target.closest('a');
-    if (a && !a.closest('.edit-toolbar')) {
-      e.preventDefault();
-    }
-  }, true);
+    if (!a) return;
+    if (a.closest('.edit-toolbar') || a.closest('.side-panel')) return;
+    e.preventDefault();
+  }, false);
 
   if (cmsImageInput) {
     cmsImageInput.addEventListener('change', function(e) {
