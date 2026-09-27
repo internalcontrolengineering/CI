@@ -1061,6 +1061,56 @@
     to{opacity:0;transform:translateY(-15px)}
   }
 
+
+  /* ===== FILA DE SECCIONES BAJO EL ENCABEZADO (todos los dispositivos) ===== */
+  .nav-sections-bar{
+    width:100%;
+    border-top:1px solid rgba(201,162,39,.18);
+    background:linear-gradient(180deg, #fafafa 0%, #fff 100%);
+  }
+  .nav-sections-inner{
+    max-width:1200px;margin:0 auto;padding:0 2rem;
+    display:flex;align-items:center;gap:4px;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;scrollbar-color:var(--dorado) transparent;
+  }
+  .nav-sections-inner::-webkit-scrollbar{height:3px}
+  .nav-sections-inner::-webkit-scrollbar-thumb{background:var(--dorado);border-radius:3px}
+  .nav-sec-btn{
+    flex-shrink:0;
+    background:transparent;border:none;cursor:pointer;
+    font-family:inherit;font-size:.68rem;font-weight:700;
+    letter-spacing:.06em;text-transform:uppercase;
+    color:var(--texto-gris);padding:12px 14px;
+    border-bottom:2px solid transparent;
+    white-space:nowrap;transition:all .2s;
+    border-radius:0;
+  }
+  .nav-sec-btn:hover{
+    color:var(--dorado-oscuro);
+    background:rgba(201,162,39,.06);
+    border-bottom-color:rgba(201,162,39,.4);
+  }
+  .nav-sec-btn.active{
+    color:var(--dorado-oscuro);
+    border-bottom-color:var(--dorado);
+    background:rgba(201,162,39,.08);
+  }
+  .side-hint{pointer-events:auto !important;cursor:pointer}
+  .side-hint:hover{transform:translateY(-50%) scale(1.08)}
+  @media(max-width:900px){
+    .nav-sections-inner{padding:0 1.25rem}
+    .nav-sec-btn{font-size:.62rem;padding:10px 11px;letter-spacing:.04em}
+  }
+  @media(max-width:600px){
+    .nav-sections-inner{padding:0 1rem}
+    .nav-sec-btn{font-size:.58rem;padding:9px 10px}
+    .brand-text small{display:flex !important;font-size:.58rem;letter-spacing:.1em}
+  }
+  @media(max-width:380px){
+    .brand-text small{display:flex !important;font-size:.52rem}
+  }
+
   /* ===== SIDEBAR LATERAL DERECHO ===== */
   .side-rail{
     position:fixed;
@@ -1335,7 +1385,7 @@
     .brand-logo-wrap{width:64px;height:64px;border-radius:18px}
     .brand-logo{width:52px;height:52px}
     .brand-text strong{font-size:1.1rem;font-family:'Quicksand',sans-serif;line-height:1.15}
-    .brand-text small{display:none}
+    .brand-text small{display:flex}
     .btn-inicio{padding:8px 14px;font-size:.6rem;gap:6px}
     .btn-inicio i{font-size:.75rem}
 
@@ -1790,6 +1840,20 @@
       </button>
     </div>
   </div>
+  <!-- Secciones bajo el encabezado — visibles en PC, tablet y celular -->
+  <div class="nav-sections-bar" id="navSectionsBar">
+    <div class="nav-sections-inner">
+      <button type="button" class="nav-sec-btn" data-tab-link="proposito">Propósito</button>
+      <button type="button" class="nav-sec-btn" data-tab-link="tres-lineas">Tres Líneas</button>
+      <button type="button" class="nav-sec-btn" data-tab-link="coso">COSO</button>
+      <button type="button" class="nav-sec-btn" data-tab-link="procesos">Procesos</button>
+      <button type="button" class="nav-sec-btn" data-tab-link="beneficios">Beneficios</button>
+      <button type="button" class="nav-sec-btn" data-tab-link="antes-despues">Transformación</button>
+      <button type="button" class="nav-sec-btn" data-tab-link="fraude">Fraude</button>
+      <button type="button" class="nav-sec-btn" data-tab-link="faq">FAQ</button>
+      <button type="button" class="nav-sec-btn" data-tab-link="contacto">Contacto</button>
+    </div>
+  </div>
 </nav>
 
 <!-- ===== HERO (introducción) ===== -->
@@ -1835,7 +1899,7 @@
       <div class="hero-slide">
         <span class="tag">Lo que ganas con nosotros</span>
         <h1>Operación blindada, <span class="dorado">decisiones más rápidas</span>, procesos más ágiles.</h1>
-        <p>No somos un trámite. Somos el equipo que te ayuda a operar con confianza, anticipar problemas y proteger lo que construyes.</p>
+        <p>Somos el equipo que te ayuda a operar con confianza, anticipar problemas y proteger lo que construyes.</p>
         <a href="#" data-tab-link="beneficios" class="btn btn-dorado">Ver beneficios</a>
       </div>
 
@@ -1870,7 +1934,7 @@
     </div>
     <div class="hero-right reveal-right">
       <div class="hero-circle" style="position:relative">
-        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Control Interno" data-cms-key="hero_main_photo" id="heroMainPhoto">
+        <img src="" style="opacity:0;transition:opacity .2s ease" alt="Control Interno" data-cms-key="hero_main_photo" id="heroMainPhoto">
       </div>
       <div class="circle-deco dorado" style="width:140px;height:140px;top:-30px;right:-30px;opacity:.9;"></div>
       <div class="circle-deco gris" style="width:200px;height:200px;bottom:-50px;left:-50px;opacity:.5;"></div>
@@ -2186,7 +2250,7 @@
     <div class="section-head reveal">
       <span class="section-tag">Lo que ganas con nosotros</span>
       <h2>¿Qué ganas cuando trabajas con Control Interno?</h2>
-      <p>No somos un trámite. Somos el equipo que te ayuda a operar con confianza, anticipar problemas y proteger lo que construyes.</p>
+      <p>Somos el equipo que te ayuda a operar con confianza, anticipar problemas y proteger lo que construyes.</p>
       <div class="divider"></div>
     </div>
     <div class="benefits-grid">
@@ -2851,6 +2915,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnInicio.classList.add('hidden');
     sideButtons.forEach(b => b.classList.remove('active'));
     activeTab = null;
+    if (window.__ciSyncNavActive) window.__ciSyncNavActive(null);
     goToSlide(0);
     history.pushState({tab: null}, '', '#');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2894,6 +2959,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     activeTab = tabId;
     btnInicio.classList.remove('hidden');
+    if (window.__ciSyncNavActive) window.__ciSyncNavActive(tabId);
 
     if(push){
       history.pushState({tab: tabId}, '', `#${tabId}`);
@@ -2909,12 +2975,14 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: top, behavior: 'smooth' });
   }
 
-  tabLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const tabId = link.dataset.tabLink;
-      if(tabId) showTab(tabId);
-    });
+  // Delegación: sobrevive a reconstrucción del DOM (CMS / carrusel)
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('[data-tab-link]');
+    if (!link) return;
+    if (window.__ciEditMode) return;
+    e.preventDefault();
+    var tabId = link.getAttribute('data-tab-link');
+    if (tabId) showTab(tabId);
   });
 
   btnInicio.addEventListener('click', showHome);
@@ -2942,55 +3010,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* ===== SIDEBAR LATERAL ===== */
+  /* ===== SIDEBAR LATERAL (se queda abierta hasta elegir sección) ===== */
   const sideTrigger = document.getElementById('sideTrigger');
   const sidePanel = document.getElementById('sidePanel');
   const sideHint = document.getElementById('sideHint');
-  let hideTimeout;
-  const isTouch = window.matchMedia('(hover: none)').matches;
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  function openSide(){
-    clearTimeout(hideTimeout);
+  function openSide() {
+    if (!sidePanel) return;
     sidePanel.classList.add('open');
-    sideHint.classList.add('hidden');
+    if (sideHint) sideHint.classList.add('hidden');
   }
-  function closeSide(){
-    hideTimeout = setTimeout(() => {
-      sidePanel.classList.remove('open');
-      sideHint.classList.remove('hidden');
-    }, 400);
+  function closeSide() {
+    if (!sidePanel) return;
+    sidePanel.classList.remove('open');
+    if (sideHint) sideHint.classList.remove('hidden');
+  }
+  function toggleSide() {
+    if (sidePanel && sidePanel.classList.contains('open')) closeSide();
+    else openSide();
   }
 
-  sideTrigger.addEventListener('mouseenter', openSide);
-  sidePanel.addEventListener('mouseenter', openSide);
-  sidePanel.addEventListener('mouseleave', closeSide);
-  sideTrigger.addEventListener('mouseleave', closeSide);
-  sideHint.addEventListener('mouseenter', openSide);
+  if (canHover && sideTrigger) {
+    sideTrigger.addEventListener('mouseenter', openSide);
+  }
+  if (canHover && sideHint) {
+    sideHint.addEventListener('mouseenter', openSide);
+  }
+  // No cerrar al salir con el mouse: solo al elegir sección o clic fuera
 
-  if (isTouch) {
+  if (sideHint) {
     sideHint.style.pointerEvents = 'auto';
     sideHint.style.cursor = 'pointer';
-    sideHint.addEventListener('click', (e) => {
+    sideHint.addEventListener('click', function(e) {
+      e.preventDefault();
       e.stopPropagation();
-      if (sidePanel.classList.contains('open')) {
-        closeSide();
-      } else {
+      toggleSide();
+    });
+  }
+  if (sideTrigger) {
+    sideTrigger.addEventListener('click', function(e) {
+      if (!canHover) {
+        e.preventDefault();
         openSide();
       }
     });
-    sidePanel.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        setTimeout(closeSide, 200);
-      });
-    });
-    document.addEventListener('click', (e) => {
-      if (sidePanel.classList.contains('open') &&
-          !sidePanel.contains(e.target) &&
-          !sideHint.contains(e.target)) {
-        closeSide();
-      }
+  }
+  if (sidePanel) {
+    sidePanel.addEventListener('click', function(e) {
+      if (e.target.closest('[data-tab-link]')) setTimeout(closeSide, 150);
     });
   }
+  document.addEventListener('click', function(e) {
+    if (!sidePanel || !sidePanel.classList.contains('open')) return;
+    if (sidePanel.contains(e.target)) return;
+    if (sideHint && sideHint.contains(e.target)) return;
+    if (sideTrigger && sideTrigger.contains(e.target)) return;
+    closeSide();
+  });
+
+  function syncNavActive(tabId) {
+    document.querySelectorAll('.nav-sec-btn, .side-panel-list button').forEach(function(b) {
+      b.classList.toggle('active', !!tabId && b.getAttribute('data-tab-link') === tabId);
+    });
+  }
+  window.__ciSyncNavActive = syncNavActive;
 
   /* ============================================= */
   /* SUPABASE + CMS + MANTENIMIENTO (versión simple) */
@@ -3072,22 +3156,48 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function setImageSrcClean(img, newSrc) {
+    if (!img) return;
+    var next = (newSrc && String(newSrc).trim()) ? String(newSrc).trim() : '';
+    if (next && img.getAttribute('src') === next && img.style.opacity === '1') return;
+    img.style.opacity = '0';
+    img.removeAttribute('src');
+    try { img.src = ''; } catch (e1) {}
+    if (!next) return;
+    function show() {
+      img.style.opacity = '1';
+      img.removeEventListener('load', show);
+      img.removeEventListener('error', fail);
+    }
+    function fail() {
+      img.removeAttribute('src');
+      img.style.opacity = '0';
+      img.removeEventListener('load', show);
+      img.removeEventListener('error', fail);
+    }
+    img.addEventListener('load', show);
+    img.addEventListener('error', fail);
+    img.src = next;
+    if (img.complete && img.naturalWidth > 0) show();
+  }
+
   function applyConfig(text, imageBase64) {
     const msg = (text && text.trim()) ? text.trim() : DEFAULT_TEXT;
     if (editableText) {
       editableText.textContent = msg;
       if (configTextarea) configTextarea.value = msg;
     }
-    if (!editableImage) return;
+    var imgEl = document.getElementById('editableImage');
+    if (!imgEl) return;
     if (imageBase64 && imageBase64.length > 0) {
-      editableImage.src = imageBase64;
-      editableImage.classList.remove('hidden');
+      setImageSrcClean(imgEl, imageBase64);
+      imgEl.classList.remove('hidden');
       if (editableText) editableText.classList.add('hidden');
       if (configPreview) configPreview.innerHTML = '<img src="' + imageBase64 + '" alt="Preview">';
       pendingImageData = imageBase64;
     } else {
-      editableImage.classList.add('hidden');
-      editableImage.src = '';
+      imgEl.classList.add('hidden');
+      setImageSrcClean(imgEl, '');
       if (editableText) editableText.classList.remove('hidden');
       if (configPreview) configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
       pendingImageData = null;
@@ -3098,13 +3208,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!content || typeof content !== 'object') return;
     Object.keys(content).forEach(function(key) {
       var item = content[key];
+      if (!item) return;
+      if (key === '__hero_left_html' || key === '__faq_list_html') return;
       var el = document.querySelector('[data-cms-key="' + key + '"]');
-      if (!el || !item) return;
+      if (!el) return;
       try {
-        if (item.type === 'img' && el.tagName === 'IMG') el.src = item.value;
+        if (item.type === 'img' && el.tagName === 'IMG') setImageSrcClean(el, item.value || '');
         else if (item.type === 'html') el.innerHTML = item.value;
         else if (item.type === 'text') el.textContent = item.value;
-      } catch (e) {}
+      } catch (e2) {}
     });
   }
 
@@ -3519,7 +3631,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (file.size > 5 * 1024 * 1024) { alert('Máximo 5 MB.'); return; }
       var reader = new FileReader();
       reader.onload = function(evt) {
-        currentImgTarget.src = evt.target.result;
+        if (typeof setImageSrcClean === 'function' && currentImgTarget) {
+          setImageSrcClean(currentImgTarget, evt.target.result);
+        } else if (currentImgTarget) {
+          currentImgTarget.src = evt.target.result;
+          currentImgTarget.style.opacity = '1';
+        }
         currentImgTarget = null;
         cmsImageInput.value = '';
       };
