@@ -1677,8 +1677,18 @@
   .cms-btn-add:hover{filter:brightness(1.08)}
   .cms-btn-del{background:rgba(198,40,40,.12);color:var(--rojo);border:1px solid rgba(198,40,40,.35)!important}
   .cms-btn-del:hover{background:var(--rojo);color:#fff}
-  body.cms-editing a.btn,
-  body.cms-editing a.feature-link{pointer-events:none;opacity:.85}
+  body.cms-editing a.btn:not([data-tab-link]),
+  body.cms-editing a.feature-link:not([data-tab-link]){pointer-events:none;opacity:.85}
+  /* Permitir navegar entre secciones mientras se edita */
+  body.cms-editing [data-tab-link],
+  body.cms-editing .nav-sec-btn,
+  body.cms-editing .side-panel-list button,
+  body.cms-editing .btn-inicio,
+  body.cms-editing #brandHome{
+    pointer-events:auto !important;
+    cursor:pointer !important;
+    opacity:1 !important;
+  }
   body.cms-editing .hero-dots{pointer-events:auto}
   body.cms-editing .hero-dot{pointer-events:auto;cursor:pointer;width:14px;height:14px}
   body.cms-editing [contenteditable="true"]{
@@ -2920,6 +2930,12 @@ document.addEventListener('DOMContentLoaded', () => {
     history.pushState({tab: null}, '', '#');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (!window.__ciEditMode) startCarousel();
+    // Reaplicar edición en el home visible
+    if (window.__ciEditMode) {
+      setTimeout(function() {
+        if (typeof enableEditingOnElements === 'function') enableEditingOnElements();
+      }, 100);
+    }
   }
 
   function showTab(tabId, push = true){
@@ -2950,6 +2966,10 @@ document.addEventListener('DOMContentLoaded', () => {
           bar.style.width = '0';
           setTimeout(() => { bar.style.width = bar.dataset.width; }, 150);
         });
+        // En modo edición: hacer editables los textos de la sección visible
+        if (window.__ciEditMode && typeof enableEditingOnElements === 'function') {
+          enableEditingOnElements();
+        }
       }, 80);
     }, 300);
 
@@ -2976,13 +2996,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Delegación: sobrevive a reconstrucción del DOM (CMS / carrusel)
+  // También permite navegar entre secciones mientras se edita la página
   document.addEventListener('click', function(e) {
     var link = e.target.closest('[data-tab-link]');
     if (!link) return;
-    if (window.__ciEditMode) return;
+    // No interferir si el clic es sobre un control CMS (agregar/eliminar)
+    if (e.target.closest('.cms-controls, .cms-faq-del, .edit-toolbar')) return;
     e.preventDefault();
     var tabId = link.getAttribute('data-tab-link');
-    if (tabId) showTab(tabId);
+    if (!tabId) return;
+    showTab(tabId);
+    // En modo edición: reactivar contenteditable en la sección recién mostrada
+    if (window.__ciEditMode) {
+      setTimeout(function() {
+        if (typeof enableEditingOnElements === 'function') enableEditingOnElements();
+      }, 450);
+    }
   });
 
   btnInicio.addEventListener('click', showHome);
@@ -3614,13 +3643,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, true);
 
-  // Evitar que los links naveguen en modo edición
+  // Evitar que los links externos/href naveguen en modo edición,
+  // pero permitir los de secciones internas (data-tab-link) y el home
   document.addEventListener('click', function(e) {
     if (!isEditMode) return;
     var a = e.target.closest('a');
-    if (a && !a.closest('.edit-toolbar')) {
-      e.preventDefault();
-    }
+    if (!a || a.closest('.edit-toolbar')) return;
+    // Permitir navegación interna entre secciones y volver al inicio
+    if (a.hasAttribute('data-tab-link') || a.id === 'brandHome' || a.closest('#brandHome')) return;
+    e.preventDefault();
   }, true);
 
   if (cmsImageInput) {
