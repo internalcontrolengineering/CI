@@ -3192,26 +3192,38 @@ document.addEventListener('DOMContentLoaded', () => {
   function setImageSrcClean(img, newSrc) {
     if (!img) return;
     var next = (newSrc && String(newSrc).trim()) ? String(newSrc).trim() : '';
-    if (next && img.getAttribute('src') === next && img.style.opacity === '1') return;
-    img.style.opacity = '0';
-    img.removeAttribute('src');
-    try { img.src = ''; } catch (e1) {}
-    if (!next) return;
+    if (!next) {
+      img.style.opacity = '0';
+      img.removeAttribute('src');
+      try { img.src = ''; } catch (e0) {}
+      return;
+    }
+    // Si ya está visible con el mismo src, no tocar
+    if (img.getAttribute('src') === next && img.style.opacity === '1' && img.naturalWidth > 0) return;
     function show() {
       img.style.opacity = '1';
       img.removeEventListener('load', show);
       img.removeEventListener('error', fail);
     }
     function fail() {
-      img.removeAttribute('src');
+      console.warn('No se pudo cargar imagen CMS');
       img.style.opacity = '0';
       img.removeEventListener('load', show);
       img.removeEventListener('error', fail);
     }
     img.addEventListener('load', show);
     img.addEventListener('error', fail);
+    img.style.opacity = '0';
     img.src = next;
-    if (img.complete && img.naturalWidth > 0) show();
+    // data: URLs a veces ya están completas de inmediato
+    if (img.complete && img.naturalWidth > 0) {
+      show();
+    } else {
+      // Fallback por si el evento load no dispara con data-URL
+      setTimeout(function() {
+        if (img.getAttribute('src') === next && img.naturalWidth > 0) show();
+      }, 50);
+    }
   }
 
   function applyConfig(text, imageBase64) {
@@ -3222,12 +3234,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     var imgEl = document.getElementById('editableImage');
     if (!imgEl) return;
-    if (imageBase64 && imageBase64.length > 0) {
-      setImageSrcClean(imgEl, imageBase64);
+    var hasImg = !!(imageBase64 && String(imageBase64).length > 32);
+    if (hasImg) {
       imgEl.classList.remove('hidden');
+      setImageSrcClean(imgEl, imageBase64);
       if (editableText) editableText.classList.add('hidden');
-      if (configPreview) configPreview.innerHTML = '<img src="' + imageBase64 + '" alt="Preview">';
+      if (configPreview) {
+        // No inyectar data-URL gigante en preview si ya hay pending; usar el mismo src
+        configPreview.innerHTML = '';
+        var prevImg = document.createElement('img');
+        prevImg.alt = 'Preview';
+        prevImg.src = imageBase64;
+        configPreview.appendChild(prevImg);
+      }
       pendingImageData = imageBase64;
+      removeImageFlag = false;
     } else {
       imgEl.classList.add('hidden');
       setImageSrcClean(imgEl, '');
@@ -3245,6 +3266,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (key === '__hero_left_html' || key === '__faq_list_html') return;
       var el = document.querySelector('[data-cms-key="' + key + '"]');
       if (!el) return;
+      // Proteger imagen y texto del mensaje del departamento
+      if (el.id === 'editableImage' || el.id === 'editableText') return;
+      if (el.classList.contains('editable-image') || el.classList.contains('editable-text')) return;
       try {
         if (item.type === 'img' && el.tagName === 'IMG') setImageSrcClean(el, item.value || '');
         else if (item.type === 'html') el.innerHTML = item.value;
@@ -3258,8 +3282,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-cms-key]').forEach(function(el) {
       var key = el.getAttribute('data-cms-key');
       if (!key) return;
+      // Nunca mezclar la imagen/texto del mensaje del departamento con page_content
+      if (el.id === 'editableImage' || el.id === 'editableText' || el.classList.contains('editable-image') || el.classList.contains('editable-text')) return;
+      if (key === 'hero_main_photo' && el.id === 'heroMainPhoto') {
+        // hero sí se guarda en CMS
+      }
       if (el.tagName === 'IMG') {
-        content[key] = { type: 'img', value: el.getAttribute('src') || '' };
+        var src = el.getAttribute('src') || '';
+        // No guardar data-URLs enormes dentro de page_content
+        if (src.indexOf('data:image') === 0 && src.length > 100000) {
+          content[key] = { type: 'img', value: '' };
+        } else {
+          content[key] = { type: 'img', value: src };
+        }
       } else {
         content[key] = { type: 'html', value: el.innerHTML };
       }
@@ -3286,9 +3321,11 @@ document.addEventListener('DOMContentLoaded', () => {
         el.setAttribute('data-cms-key', 't' + (n++));
       });
     });
-    // Todas las imágenes relevantes
+    // Todas las imágenes relevantes (excepto mensaje del departamento y logos de sistema)
     document.querySelectorAll('img').forEach(function(img) {
-      if (img.closest('.config-modal, .password-modal, .edit-toolbar, .maintenance-overlay')) return;
+      if (img.closest('.config-modal, .password-modal, .edit-toolbar, .maintenance-overlay, .footer-signature')) return;
+      if (img.id === 'editableImage' || img.classList.contains('editable-image')) return;
+      if (img.classList.contains('maintenance-logo') || img.classList.contains('password-modal-logo') || img.classList.contains('brand-logo')) return;
       if (img.getAttribute('data-cms-key')) return;
       img.setAttribute('data-cms-key', 'img' + (n++));
     });
@@ -3336,12 +3373,14 @@ document.addEventListener('DOMContentLoaded', () => {
       var data = res.data;
       if (!data) return;
 
-      applyConfig(data.content_text, data.image_base64);
+      // Primero el contenido CMS de la página; al final el mensaje/imagen del home
+      // para que nada del page_content borre la imagen del departamento.
       if (data.page_content) {
         ensureCmsKeys();
         var pc = typeof data.page_content === 'string' ? JSON.parse(data.page_content) : data.page_content;
         applyPageContent(pc);
       }
+      applyConfig(data.content_text, data.image_base64);
 
       updateMaintToggleUI(!!data.maintenance_mode);
       // Solo omitir overlay si hay sesión admin abierta o modo edición activo
@@ -3367,12 +3406,12 @@ document.addEventListener('DOMContentLoaded', () => {
         var row = payload.new;
         if (!row) return;
         if (!isEditMode) {
-          applyConfig(row.content_text, row.image_base64);
           if (row.page_content) {
             ensureCmsKeys();
             var pc = typeof row.page_content === 'string' ? JSON.parse(row.page_content) : row.page_content;
             applyPageContent(pc);
           }
+          applyConfig(row.content_text, row.image_base64);
         }
         updateMaintToggleUI(!!row.maintenance_mode);
         if (row.maintenance_mode && !adminSession && !isEditMode) {
@@ -3551,11 +3590,9 @@ document.addEventListener('DOMContentLoaded', () => {
       var it = content[k];
       if (it && it.type === 'img' && it.value && it.value.length > 350000) delete content[k];
     });
-    var homeText = editableText ? editableText.textContent.trim() : DEFAULT_TEXT;
-    var homeImg = (editableImage && !editableImage.classList.contains('hidden')) ? editableImage.src : null;
+    // No tocar content_text ni image_base64 aquí: esos campos los gestiona
+    // solo el modal "Personalizar home". Si se envían null, se borra la imagen en todos los dispositivos.
     return await upsertRow({
-      content_text: homeText || DEFAULT_TEXT,
-      image_base64: homeImg,
       page_content: content,
       maintenance_mode: isEditMode,
       editor_token: isEditMode ? editorToken : null
