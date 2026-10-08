@@ -3301,10 +3301,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function upsertRow(fields) {
     var payload = Object.assign({ id: CONFIG_ROW_ID, updated_at: new Date().toISOString() }, fields);
+    // Evitar payloads enormes de base64 (límite práctico ~700KB en el cuerpo)
+    if (payload.image_base64 && typeof payload.image_base64 === 'string' && payload.image_base64.length > 700000) {
+      console.warn('image_base64 demasiado grande:', payload.image_base64.length);
+      return false;
+    }
     try {
       var res = await supabase.from('home_config').upsert(payload, { onConflict: 'id' });
       if (res.error) {
-        console.warn('Supabase upsert error:', res.error.message);
+        console.warn('Supabase upsert error:', res.error.message, res.error);
         return false;
       }
       return true;
@@ -3984,45 +3989,140 @@ document.addEventListener('DOMContentLoaded', () => {
     if (file) handleFile(file);
   });
 
-  function handleFile(file) {
-    if (!file.type.startsWith('image/')) {
-      alert('Selecciona una imagen válida.');
+  function compressImageToDataUrl(file, maxSide, quality) {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onerror = function() { reject(new Error('No se pudo leer el archivo')); };
+      reader.onload = function(evt) {
+        var img = new Image();
+        img.onload = function() {
+          var w = img.naturalWidth || img.width;
+          var h = img.naturalHeight || img.height;
+          if (!w || !h) { reject(new Error('Imagen inválida')); return; }
+          var scale = 1;
+          if (w > maxSide || h > maxSide) scale = maxSide / Math.max(w, h);
+          var cw = Math.max(1, Math.round(w * scale));
+          var ch = Math.max(1, Math.round(h * scale));
+          var canvas = document.createElement('canvas');
+          canvas.width = cw;
+          canvas.height = ch;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, cw, ch);
+          var outType = 'image/jpeg';
+          // Conservar PNG si tiene transparencia aproximada (archivos png/webp)
+          if (file.type === 'image/png' || file.type === 'image/webp') {
+            try {
+              var q = quality;
+              var dataUrl = canvas.toDataURL('image/jpeg', q);
+              // Si el resultado es muy grande, bajar calidad
+              if (dataUrl.length > 450000 && q > 0.55) {
+                dataUrl = canvas.toDataURL('image/jpeg', 0.55);
+              }
+              resolve(dataUrl);
+              return;
+            } catch (e) {}
+          }
+          var dataUrl = canvas.toDataURL(outType, quality);
+          if (dataUrl.length > 450000) {
+            dataUrl = canvas.toDataURL(outType, 0.5);
+          }
+          if (dataUrl.length > 650000) {
+            // Segunda pasada más pequeña
+            var scale2 = 0.7;
+            canvas.width = Math.max(1, Math.round(cw * scale2));
+            canvas.height = Math.max(1, Math.round(ch * scale2));
+            ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            dataUrl = canvas.toDataURL(outType, 0.5);
+          }
+          resolve(dataUrl);
+        };
+        img.onerror = function() { reject(new Error('No se pudo cargar la imagen')); };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleFile(file) {
+    if (!file || !file.type || !file.type.startsWith('image/')) {
+      alert('Selecciona una imagen válida (JPG, PNG o WEBP).');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Máximo 5 MB.');
+    if (file.size > 8 * 1024 * 1024) {
+      alert('Máximo 8 MB. La imagen se comprimirá al guardar.');
       return;
     }
-    var reader = new FileReader();
-    reader.onload = function(evt) {
-      pendingImageData = evt.target.result;
+    if (configPreview) {
+      configPreview.innerHTML = '<div class="config-preview-empty">Procesando imagen...</div>';
+    }
+    try {
+      var dataUrl = await compressImageToDataUrl(file, 1200, 0.78);
+      pendingImageData = dataUrl;
       removeImageFlag = false;
-      configPreview.innerHTML = '<img src="' + pendingImageData + '" alt="Preview">';
-    };
-    reader.readAsDataURL(file);
+      if (configPreview) {
+        configPreview.innerHTML = '<img src="' + dataUrl + '" alt="Preview">';
+      }
+    } catch (err) {
+      console.warn(err);
+      alert('No se pudo procesar la imagen. Prueba con otro archivo.');
+      if (configPreview) {
+        configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
+      }
+    }
   }
 
   configSave.addEventListener('click', async function() {
     var newText = configTextarea.value.trim() || DEFAULT_TEXT;
-    var imageToSave = (pendingImageData && !removeImageFlag) ? pendingImageData : null;
-    applyConfig(newText, imageToSave);
-    var ok = await upsertRow({ content_text: newText, image_base64: imageToSave });
-    if (ok) {
-      closeConfig(); // si hay mantenimiento activo, closeConfig muestra el aviso
-    } else {
-      alert('No se pudo guardar. ¿Ejecutaste el SQL en Supabase?');
+    var imageToSave = (pendingImageData && !removeImageFlag && pendingImageData.length > 0)
+      ? pendingImageData
+      : null;
+    var btn = configSave;
+    var prevHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = 'Guardando...';
+    try {
+      // Aplicar en pantalla de inmediato
+      applyConfig(newText, imageToSave);
+      var ok = await upsertRow({
+        content_text: newText,
+        image_base64: imageToSave
+      });
+      if (ok) {
+        btn.innerHTML = '✓ Guardado';
+        setTimeout(function() {
+          btn.innerHTML = prevHtml;
+          btn.disabled = false;
+          closeConfig();
+        }, 450);
+      } else {
+        alert('No se pudo guardar en el servidor.\n\nPosibles causas:\n• La imagen sigue siendo muy pesada\n• Falta ejecutar el SQL en Supabase\n• Problema de conexión\n\nEl cambio se ve en esta sesión, pero puede no persistir.');
+        btn.innerHTML = prevHtml;
+        btn.disabled = false;
+      }
+    } catch (err) {
+      console.warn(err);
+      alert('Error al guardar: ' + (err && err.message ? err.message : 'desconocido'));
+      btn.innerHTML = prevHtml;
+      btn.disabled = false;
     }
   });
 
   configClear.addEventListener('click', async function() {
-    if (!confirm('¿Restaurar el mensaje por defecto y quitar la imagen?')) return;
+    var keepText = (configTextarea && configTextarea.value.trim())
+      ? configTextarea.value.trim()
+      : (editableText ? editableText.textContent.trim() : DEFAULT_TEXT);
+    if (!confirm('¿Quitar la imagen y mostrar el texto del mensaje?\n\nEl texto actual se conservará.')) return;
     removeImageFlag = true;
     pendingImageData = null;
-    configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
-    configFileInput.value = '';
-    configTextarea.value = DEFAULT_TEXT;
-    applyConfig(DEFAULT_TEXT, null);
-    await upsertRow({ content_text: DEFAULT_TEXT, image_base64: null });
+    if (configPreview) configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
+    if (configFileInput) configFileInput.value = '';
+    if (configTextarea) configTextarea.value = keepText || DEFAULT_TEXT;
+    applyConfig(keepText || DEFAULT_TEXT, null);
+    var ok = await upsertRow({ content_text: keepText || DEFAULT_TEXT, image_base64: null });
+    if (!ok) {
+      alert('Se quitó la imagen en esta pantalla, pero no se pudo guardar en el servidor.');
+    }
   });
 
   document.addEventListener('keydown', function(e) {
