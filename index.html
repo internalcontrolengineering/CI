@@ -217,11 +217,15 @@
   }
   .editable-image{
     display:block;
-    width:100%;
-    max-height:340px;
-    object-fit:cover;
+    width:auto;
+    max-width:100%;
+    height:auto;
+    max-height:none;
+    object-fit:contain;
+    object-position:center;
     border-radius:14px;
     box-shadow:0 8px 24px rgba(0,0,0,.08);
+    margin:0 auto;
   }
   .editable-image.hidden{display:none}
   .editable-text.hidden{display:none}
@@ -392,7 +396,7 @@
     border:1px solid var(--borde);
     position:relative;
   }
-  .config-preview img{width:100%;max-height:200px;object-fit:cover;display:block}
+  .config-preview img{width:auto;max-width:100%;height:auto;max-height:280px;object-fit:contain;display:block;margin:0 auto}
   .config-preview-empty{
     padding:20px;
     text-align:center;
