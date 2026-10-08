@@ -1961,7 +1961,8 @@
         <i class="fas fa-quote-left"></i> Mensaje del Departamento
       </div>
       <img id="editableImage" class="editable-image hidden" alt="Imagen personalizada">
-      <p id="editableText" class="editable-text">El control interno somos todos: la excelencia colectiva existe únicamente cuando cada uno se hace cargo de su metro cuadrado.</p>
+      <p id="editableText" class="editable-text hidden">El control interno somos todos: la excelencia colectiva existe únicamente cuando cada uno se hace cargo de su metro cuadrado.</p>
+      <p id="editableLoading" class="editable-text" style="opacity:.5;font-style:italic;border-left-color:#ccc">Cargando mensaje...</p>
     </div>
   </div>
 </header>
@@ -2658,12 +2659,14 @@
       </div>
 
       <div class="config-panel active" data-config-panel="text">
-        <label class="config-label" for="configTextarea">Mensaje del departamento</label>
-        <textarea class="config-textarea" id="configTextarea" placeholder="Escribe el mensaje que quieres mostrar en el home...">El control interno somos todos: la excelencia colectiva existe únicamente cuando cada uno se hace cargo de su metro cuadrado.</textarea>
+        <label class="config-label" for="configTextarea">Mensaje del departamento (texto)</label>
+        <p style="font-size:.78rem;color:#777;margin:0 0 10px;line-height:1.45">Se muestra <strong>solo el texto</strong> o <strong>solo la imagen</strong>, nunca los dos. Si subes una imagen en la otra pestaña, el texto no se verá en el home.</p>
+        <textarea class="config-textarea" id="configTextarea" placeholder="Escribe el mensaje (déjalo vacío si solo quieres imagen)...">El control interno somos todos: la excelencia colectiva existe únicamente cuando cada uno se hace cargo de su metro cuadrado.</textarea>
       </div>
 
       <div class="config-panel" data-config-panel="image">
         <label class="config-label">Imagen personalizada</label>
+        <p style="font-size:.78rem;color:#777;margin:0 0 10px;line-height:1.45">Si guardas con imagen, <strong>reemplaza al texto</strong> en el home. Para volver al texto, usa el botón de basura y guarda.</p>
         <div class="config-file-zone" id="configFileZone">
           <i class="fas fa-cloud-upload-alt"></i>
           <p>Haz clic o arrastra una imagen aquí</p>
@@ -3227,20 +3230,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function applyConfig(text, imageBase64) {
-    const msg = (text && text.trim()) ? text.trim() : DEFAULT_TEXT;
-    if (editableText) {
-      editableText.textContent = msg;
-      if (configTextarea) configTextarea.value = msg;
-    }
+    // SOLO "Mensaje del Departamento". Modo exclusivo: O texto O imagen (nunca ambos a la vez).
     var imgEl = document.getElementById('editableImage');
-    if (!imgEl) return;
+    var loadingEl = document.getElementById('editableLoading');
+    if (loadingEl) loadingEl.classList.add('hidden');
+    if (imgEl) imgEl.removeAttribute('data-cms-key');
+
     var hasImg = !!(imageBase64 && String(imageBase64).length > 32);
+    var msg = (text && String(text).trim()) ? String(text).trim() : '';
+
     if (hasImg) {
-      imgEl.classList.remove('hidden');
-      setImageSrcClean(imgEl, imageBase64);
-      if (editableText) editableText.classList.add('hidden');
+      // Solo imagen: ocultar texto primero para no parpadear
+      if (editableText) {
+        editableText.classList.add('hidden');
+        // Conservar texto en el modal por si después quitan la imagen, pero no mostrar
+        if (configTextarea && msg) configTextarea.value = msg;
+      }
+      if (imgEl) {
+        imgEl.classList.remove('hidden');
+        setImageSrcClean(imgEl, imageBase64);
+        imgEl.style.opacity = '1';
+      }
       if (configPreview) {
-        // No inyectar data-URL gigante en preview si ya hay pending; usar el mismo src
         configPreview.innerHTML = '';
         var prevImg = document.createElement('img');
         prevImg.alt = 'Preview';
@@ -3250,9 +3261,17 @@ document.addEventListener('DOMContentLoaded', () => {
       pendingImageData = imageBase64;
       removeImageFlag = false;
     } else {
-      imgEl.classList.add('hidden');
-      setImageSrcClean(imgEl, '');
-      if (editableText) editableText.classList.remove('hidden');
+      // Solo texto
+      if (imgEl) {
+        imgEl.classList.add('hidden');
+        setImageSrcClean(imgEl, '');
+      }
+      if (!msg) msg = DEFAULT_TEXT;
+      if (editableText) {
+        editableText.textContent = msg;
+        editableText.classList.remove('hidden');
+      }
+      if (configTextarea) configTextarea.value = msg;
       if (configPreview) configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
       pendingImageData = null;
     }
@@ -3264,15 +3283,38 @@ document.addEventListener('DOMContentLoaded', () => {
       var item = content[key];
       if (!item) return;
       if (key === '__hero_left_html' || key === '__faq_list_html') return;
+
+      // Foto del círculo: SOLO al elemento hero, nunca al mensaje del departamento
+      if (key === 'hero_main_photo' && item.type === 'img') {
+        var heroEl = document.getElementById('heroMainPhoto') || document.querySelector('.hero-circle img');
+        if (heroEl && item.value) {
+          heroEl.id = 'heroMainPhoto';
+          heroEl.setAttribute('data-cms-key', 'hero_main_photo');
+          heroEl.classList.remove('hidden');
+          setImageSrcClean(heroEl, item.value);
+          heroEl.style.opacity = '1';
+        }
+        return;
+      }
+
       var el = document.querySelector('[data-cms-key="' + key + '"]');
       if (!el) return;
-      // Proteger imagen y texto del mensaje del departamento
+      // Proteger mensaje del departamento (imagen + texto)
       if (el.id === 'editableImage' || el.id === 'editableText') return;
       if (el.classList.contains('editable-image') || el.classList.contains('editable-text')) return;
+      if (el.id === 'heroMainPhoto') return; // hero ya se aplicó arriba
       try {
-        if (item.type === 'img' && el.tagName === 'IMG') setImageSrcClean(el, item.value || '');
-        else if (item.type === 'html') el.innerHTML = item.value;
-        else if (item.type === 'text') el.textContent = item.value;
+        if (item.type === 'img' && el.tagName === 'IMG') {
+          if (item.value) {
+            el.classList.remove('hidden');
+            setImageSrcClean(el, item.value);
+            el.style.opacity = '1';
+          }
+        } else if (item.type === 'html') {
+          el.innerHTML = item.value;
+        } else if (item.type === 'text') {
+          el.textContent = item.value;
+        }
       } catch (e2) {}
     });
   }
@@ -3282,23 +3324,31 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-cms-key]').forEach(function(el) {
       var key = el.getAttribute('data-cms-key');
       if (!key) return;
-      // Nunca mezclar la imagen/texto del mensaje del departamento con page_content
+      // Nunca mezclar mensaje del departamento con page_content
       if (el.id === 'editableImage' || el.id === 'editableText' || el.classList.contains('editable-image') || el.classList.contains('editable-text')) return;
-      if (key === 'hero_main_photo' && el.id === 'heroMainPhoto') {
-        // hero sí se guarda en CMS
-      }
       if (el.tagName === 'IMG') {
         var src = el.getAttribute('src') || '';
-        // No guardar data-URLs enormes dentro de page_content
-        if (src.indexOf('data:image') === 0 && src.length > 100000) {
-          content[key] = { type: 'img', value: '' };
-        } else {
-          content[key] = { type: 'img', value: src };
+        if (!src || src === 'null' || src === 'undefined') return;
+        // Hero: siempre bajo la clave fija hero_main_photo
+        if (el.id === 'heroMainPhoto' || key === 'hero_main_photo') {
+          content['hero_main_photo'] = { type: 'img', value: src };
+          return;
         }
+        content[key] = { type: 'img', value: src };
       } else {
         content[key] = { type: 'html', value: el.innerHTML };
       }
     });
+    // Garantizar hero aunque el atributo se haya perdido
+    var heroEl = document.getElementById('heroMainPhoto');
+    if (heroEl) {
+      var hs = heroEl.getAttribute('src') || '';
+      if (hs && hs !== 'null' && heroEl.style.opacity !== '0') {
+        content['hero_main_photo'] = { type: 'img', value: hs };
+      } else if (hs && hs.indexOf('data:image') === 0) {
+        content['hero_main_photo'] = { type: 'img', value: hs };
+      }
+    }
     return content;
   }
 
@@ -3334,6 +3384,11 @@ document.addEventListener('DOMContentLoaded', () => {
       hero.setAttribute('data-cms-key', 'hero_main_photo');
       hero.id = 'heroMainPhoto';
     }
+    // Mensaje del departamento: sin clave CMS
+    var dep = document.getElementById('editableImage');
+    if (dep) dep.removeAttribute('data-cms-key');
+    var depT = document.getElementById('editableText');
+    if (depT) depT.removeAttribute('data-cms-key');
   }
 
   async function upsertRow(fields) {
@@ -3488,9 +3543,11 @@ document.addEventListener('DOMContentLoaded', () => {
       el.style.userSelect = 'text';
     });
 
-    // Imágenes
+    // Imágenes CMS (NUNCA el mensaje del departamento: ese va solo por el modal)
     document.querySelectorAll('img').forEach(function(img) {
-      if (img.closest('.config-modal,.password-modal,.edit-toolbar,.maintenance-overlay')) return;
+      if (img.closest('.config-modal,.password-modal,.edit-toolbar,.maintenance-overlay,.footer-signature')) return;
+      if (img.id === 'editableImage' || img.classList.contains('editable-image')) return;
+      if (img.classList.contains('brand-logo') || img.classList.contains('maintenance-logo') || img.classList.contains('password-modal-logo')) return;
       if (!img.getAttribute('data-cms-key')) {
         img.setAttribute('data-cms-key', 'img_' + Math.random().toString(36).slice(2, 9));
       }
@@ -3500,6 +3557,7 @@ document.addEventListener('DOMContentLoaded', () => {
       img.style.pointerEvents = 'auto';
     });
 
+    // Foto del círculo del hero: clave FIJA e independiente
     var hero = document.getElementById('heroMainPhoto') || document.querySelector('.hero-circle img');
     if (hero) {
       hero.setAttribute('data-cms-key', 'hero_main_photo');
@@ -3507,6 +3565,16 @@ document.addEventListener('DOMContentLoaded', () => {
       hero.style.cursor = 'pointer';
       hero.style.pointerEvents = 'auto';
       hero.style.outline = '3px solid #C9A227';
+      hero.title = 'Foto del círculo (independiente del mensaje del departamento)';
+    }
+
+    // Mensaje del departamento: no editable por clic CMS (solo modal Personalizar home)
+    var depImg = document.getElementById('editableImage');
+    if (depImg) {
+      depImg.removeAttribute('data-cms-key');
+      depImg.style.outline = '';
+      depImg.style.cursor = '';
+      depImg.title = 'Se cambia desde Personalizar home (doble clic en la firma del footer)';
     }
 
     // Botones eliminar en cada FAQ
@@ -3588,7 +3656,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     Object.keys(content).forEach(function(k) {
       var it = content[k];
-      if (it && it.type === 'img' && it.value && it.value.length > 350000) delete content[k];
+      // Solo descartar si es absurdamente grande (compresión falló); preferir conservar
+      if (it && it.type === 'img' && it.value && it.value.length > 1200000) {
+        console.warn('Imagen CMS demasiado grande, se omite:', k, it.value.length);
+        delete content[k];
+      }
     });
     // No tocar content_text ni image_base64 aquí: esos campos los gestiona
     // solo el modal "Personalizar home". Si se envían null, se borra la imagen en todos los dispositivos.
@@ -3677,9 +3749,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.closest('.cms-controls, .edit-toolbar, .hero-dot, .cms-faq-del, .side-panel, .btn-inicio')) return;
 
     var img = e.target.closest('img');
-    if (img && (img.getAttribute('data-cms-key') || img.id === 'heroMainPhoto' || img.closest('.hero-circle'))) {
+    if (!img) return;
+    // Mensaje del departamento: NO se cambia aquí (solo modal config)
+    if (img.id === 'editableImage' || img.classList.contains('editable-image')) return;
+    if (img.classList.contains('brand-logo') || img.closest('.footer-signature')) return;
+    if (img.getAttribute('data-cms-key') || img.id === 'heroMainPhoto' || img.closest('.hero-circle')) {
       e.preventDefault();
       e.stopPropagation();
+      // Si es el círculo del hero, forzar la clave fija
+      if (img.id === 'heroMainPhoto' || img.closest('.hero-circle')) {
+        img = document.getElementById('heroMainPhoto') || img;
+        img.id = 'heroMainPhoto';
+        img.setAttribute('data-cms-key', 'hero_main_photo');
+      }
       currentImgTarget = img;
       if (cmsImageInput) {
         cmsImageInput.value = '';
@@ -3701,23 +3783,44 @@ document.addEventListener('DOMContentLoaded', () => {
   }, true);
 
   if (cmsImageInput) {
-    cmsImageInput.addEventListener('change', function(e) {
+    cmsImageInput.addEventListener('change', async function(e) {
       var file = e.target.files && e.target.files[0];
-      if (!file || !currentImgTarget) return;
+      var target = currentImgTarget;
+      if (!file || !target) return;
       if (!file.type.startsWith('image/')) { alert('Selecciona una imagen válida.'); return; }
-      if (file.size > 5 * 1024 * 1024) { alert('Máximo 5 MB.'); return; }
-      var reader = new FileReader();
-      reader.onload = function(evt) {
-        if (typeof setImageSrcClean === 'function' && currentImgTarget) {
-          setImageSrcClean(currentImgTarget, evt.target.result);
-        } else if (currentImgTarget) {
-          currentImgTarget.src = evt.target.result;
-          currentImgTarget.style.opacity = '1';
+      if (file.size > 8 * 1024 * 1024) { alert('Máximo 8 MB.'); return; }
+      try {
+        // Comprimir para que quepa en page_content y no se borre al guardar
+        var dataUrl = (typeof compressImageToDataUrl === 'function')
+          ? await compressImageToDataUrl(file, 1100, 0.76)
+          : await new Promise(function(resolve, reject) {
+              var r = new FileReader();
+              r.onload = function(ev) { resolve(ev.target.result); };
+              r.onerror = reject;
+              r.readAsDataURL(file);
+            });
+        // Mostrar de inmediato (sin recargar)
+        target.classList.remove('hidden');
+        if (typeof setImageSrcClean === 'function') {
+          setImageSrcClean(target, dataUrl);
+        } else {
+          target.src = dataUrl;
+          target.style.opacity = '1';
         }
-        currentImgTarget = null;
-        cmsImageInput.value = '';
-      };
-      reader.readAsDataURL(file);
+        target.style.opacity = '1';
+        // Guardar en Supabase para que se vea en todos los dispositivos
+        if (typeof saveEverything === 'function') {
+          var ok = await saveEverything();
+          if (!ok) {
+            alert('La imagen se ve aquí, pero no se pudo guardar en el servidor. Revisa la conexión o el tamaño.');
+          }
+        }
+      } catch (err) {
+        console.warn(err);
+        alert('No se pudo procesar la imagen.');
+      }
+      currentImgTarget = null;
+      cmsImageInput.value = '';
     });
   }
 
@@ -4110,16 +4213,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   configSave.addEventListener('click', async function() {
-    var newText = configTextarea.value.trim() || DEFAULT_TEXT;
+    var typedText = (configTextarea && configTextarea.value) ? configTextarea.value.trim() : '';
     var imageToSave = (pendingImageData && !removeImageFlag && pendingImageData.length > 0)
       ? pendingImageData
       : null;
+
+    // Uno u otro: imagen sola está permitida (sin texto obligatorio)
+    if (!imageToSave && !typedText) {
+      alert('Escribe un mensaje o sube una imagen (solo uno de los dos se mostrará).');
+      return;
+    }
+
+    // Si hay imagen → modo imagen (texto opcional, no se muestra en el home)
+    // Si no hay imagen → modo texto (si vacío, se usa el mensaje por defecto)
+    var newText = imageToSave ? typedText : (typedText || DEFAULT_TEXT);
+
     var btn = configSave;
     var prevHtml = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = 'Guardando...';
     try {
-      // Aplicar en pantalla de inmediato
+      // Aplicar en pantalla de inmediato (exclusivo texto XOR imagen)
       applyConfig(newText, imageToSave);
       var ok = await upsertRow({
         content_text: newText,
@@ -4184,7 +4298,16 @@ document.addEventListener('DOMContentLoaded', () => {
   clearCmsOutlines();
   setTimeout(clearCmsOutlines, 500);
 
-  loadConfigFromSupabase();
+  loadConfigFromSupabase().finally(function() {
+    // Si tras cargar sigue todo oculto, mostrar texto por defecto
+    var t = document.getElementById('editableText');
+    var img = document.getElementById('editableImage');
+    var loading = document.getElementById('editableLoading');
+    if (loading) loading.classList.add('hidden');
+    if (t && img && t.classList.contains('hidden') && img.classList.contains('hidden')) {
+      t.classList.remove('hidden');
+    }
+  });
   subscribeRealtime();
 
 });
