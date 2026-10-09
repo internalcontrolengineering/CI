@@ -2612,8 +2612,8 @@
 </div>
 
 <footer>
-  <span class="footer-brand">Departamento de Control Interno</span>
-  <p class="footer-manifesto">
+  <span class="footer-brand" data-cms-key="footer_brand">Departamento de Control Interno</span>
+  <p class="footer-manifesto" data-cms-key="footer_manifesto">
     El control interno somos todos: la excelencia colectiva existe únicamente cuando cada uno se hace cargo de su metro cuadrado.
   </p>
 
@@ -3426,71 +3426,177 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function applyPageContent(content) {
-    // MODO SEGURO: solo aplica claves conocidas.
-    // Las claves t0/t1/auto_*/img_* del CMS antiguo CORROMPÍAN textos
-    // (marca, métricas, FAQ, etc.) al reasignarse en otro orden.
     if (!content || typeof content !== 'object') return;
 
-    // Foto del círculo del hero (independiente del mensaje del departamento)
-    var heroItem = content['hero_main_photo'];
-    if (heroItem && heroItem.type === 'img' && heroItem.value) {
+    // Regenerar las mismas claves estables en el DOM actual
+    ensureCmsKeys();
+
+    // Footer con claves fijas (siempre)
+    if (content['footer_manifesto'] && content['footer_manifesto'].value != null) {
+      var fm = document.querySelector('.footer-manifesto');
+      if (fm) {
+        fm.setAttribute('data-cms-key', 'footer_manifesto');
+        fm.innerHTML = content['footer_manifesto'].value;
+      }
+    }
+    if (content['footer_brand'] && content['footer_brand'].value != null) {
+      var fb = document.querySelector('.footer-brand');
+      if (fb) {
+        fb.setAttribute('data-cms-key', 'footer_brand');
+        fb.innerHTML = content['footer_brand'].value;
+      }
+    }
+
+    // Hero photo
+    if (content['hero_main_photo'] && content['hero_main_photo'].type === 'img' && content['hero_main_photo'].value) {
       var heroEl = document.getElementById('heroMainPhoto') || document.querySelector('.hero-circle img');
       if (heroEl) {
         heroEl.id = 'heroMainPhoto';
         heroEl.setAttribute('data-cms-key', 'hero_main_photo');
         heroEl.classList.remove('hidden');
-        setImageSrcClean(heroEl, heroItem.value);
+        setImageSrcClean(heroEl, content['hero_main_photo'].value);
         heroEl.style.opacity = '1';
       }
     }
-    // Cualquier otra clave t*, auto_*, img_* se IGNORA a propósito
+
+    // Resto de claves estables: solo si existe el elemento con esa clave
+    Object.keys(content).forEach(function(key) {
+      if (key === '__hero_left_html' || key === '__faq_list_html') return;
+      if (key === 'footer_manifesto' || key === 'footer_brand' || key === 'hero_main_photo') return;
+      // Ignorar claves secuenciales antiguas corruptas (t0, t1, auto_, img_ aleatorias)
+      if (/^t\d+$/.test(key) || key.indexOf('auto_') === 0) return;
+
+      var item = content[key];
+      if (!item) return;
+      var el = document.querySelector('[data-cms-key="' + key.replace(/"/g, '\\"') + '"]');
+      if (!el) return;
+      if (el.closest('#metricsHome') || el.closest('.brand') || el.closest('.visit-counter-bar')) return;
+      if (el.id === 'editableImage' || el.id === 'editableText') return;
+      try {
+        if (item.type === 'img' && el.tagName === 'IMG') {
+          if (item.value) {
+            el.classList.remove('hidden');
+            setImageSrcClean(el, item.value);
+            el.style.opacity = '1';
+          }
+        } else if (item.type === 'html') {
+          el.innerHTML = item.value;
+        } else if (item.type === 'text') {
+          el.textContent = item.value;
+        }
+      } catch (e2) {}
+    });
   }
 
   function collectPageContent() {
-    // Solo persistir lo que debe sobrevivir recargas sin corromper el resto
     var content = {};
-    var heroEl = document.getElementById('heroMainPhoto') || document.querySelector('.hero-circle img');
+    // Asegurar claves estables antes de recolectar
+    ensureCmsKeys();
+    document.querySelectorAll('[data-cms-key]').forEach(function(el) {
+      var key = el.getAttribute('data-cms-key');
+      if (!key) return;
+      // Exclusiones
+      if (el.id === 'editableImage' || el.id === 'editableText') return;
+      if (el.classList.contains('editable-image') || el.classList.contains('editable-text')) return;
+      if (el.closest('#metricsHome') || el.closest('.brand') || el.closest('.visit-counter-bar')) return;
+      if (el.closest('#footerSignature') || el.closest('.footer-signature')) return;
+      if (el.tagName === 'IMG') {
+        var src = el.getAttribute('src') || '';
+        if (!src || src === 'null') return;
+        content[key] = { type: 'img', value: src };
+      } else {
+        content[key] = { type: 'html', value: el.innerHTML };
+      }
+    });
+    // Forzar hero
+    var heroEl = document.getElementById('heroMainPhoto');
     if (heroEl) {
       var hs = heroEl.getAttribute('src') || '';
-      if (hs && hs !== 'null' && hs !== 'undefined' && hs.length > 10) {
-        content['hero_main_photo'] = { type: 'img', value: hs };
-      }
+      if (hs && hs.length > 10) content['hero_main_photo'] = { type: 'img', value: hs };
     }
+    // Forzar footer (si existen)
+    var fm = document.querySelector('.footer-manifesto');
+    if (fm) content['footer_manifesto'] = { type: 'html', value: fm.innerHTML };
+    var fb = document.querySelector('.footer-brand');
+    if (fb) content['footer_brand'] = { type: 'html', value: fb.innerHTML };
     return content;
   }
 
   function ensureCmsKeys() {
+    // Claves ESTABLES (no t0,t1 secuenciales) para que al recargar el contenido
+    // vuelva al mismo elemento y no se corrompa.
+    function stableKeyFor(el) {
+      if (el.id) return 'id:' + el.id;
+      var existing = el.getAttribute('data-cms-key');
+      if (existing && existing.indexOf('t') === 0 && /^t\d+$/.test(existing)) {
+        // antiguas claves secuenciales: regenerar estables
+      } else if (existing && existing.indexOf('auto_') !== 0 && existing.indexOf('img_') !== 0 && !/^t\d+$/.test(existing)) {
+        return existing; // ya estable (footer_manifesto, hero_main_photo, etc.)
+      }
+      var section = el.closest('[data-tab], section, header, footer, nav, .hero, .metrics');
+      var sec = 'root';
+      if (section) {
+        sec = section.getAttribute('data-tab')
+          || section.id
+          || (section.className && String(section.className).trim().split(/\s+/)[0])
+          || section.tagName.toLowerCase();
+      }
+      var tag = el.tagName.toLowerCase();
+      var cls = (el.className && typeof el.className === 'string') ? el.className.trim().split(/\s+/)[0] : '';
+      var scope = section || document.body;
+      var candidates = scope.querySelectorAll(tag + (cls ? '.' + cls : ''));
+      var idx = Array.prototype.indexOf.call(candidates, el);
+      if (idx < 0) {
+        candidates = scope.querySelectorAll(tag);
+        idx = Array.prototype.indexOf.call(candidates, el);
+      }
+      return 's:' + sec + '/' + tag + (cls ? '.' + cls : '') + '/' + idx;
+    }
+
+    function isProtected(el) {
+      if (!el || !el.closest) return true;
+      if (el.closest('.config-modal, .password-modal, .edit-toolbar, .maintenance-overlay, .side-panel, .cms-controls, script, style')) return true;
+      if (el.closest('#metricsHome') || el.classList.contains('metric-num') || el.classList.contains('metric-label')) return true;
+      if (el.closest('.brand') || el.closest('.nav-sections-bar') || el.closest('.visit-counter-bar')) return true;
+      if (el.id === 'editableImage' || el.id === 'editableText' || el.classList.contains('editable-image') || el.classList.contains('editable-text')) return true;
+      if (el.closest('#footerSignature') || el.closest('.footer-signature')) return true;
+      if (el.classList.contains('brand-logo') || el.classList.contains('maintenance-logo') || el.classList.contains('password-modal-logo')) return true;
+      return false;
+    }
+
     var selectors = [
       'h1', 'h2', 'h3', 'p', 'li',
       '.tag', '.section-tag', '.role', '.role-sub',
-      /* BLOQUEADOS: métricas, marca del navbar, footer de firma */
       '.feature-card h3', '.feature-card p',
       '.faq-header', '.faq-body p',
-      '.cta-form h3', '.ba-badge'
+      '.cta-form h3', '.ba-badge',
+      '.footer-manifesto', '.footer-brand',
+      '.tl-content h3', '.tl-content p', '.tl-content .role',
+      '.benefit-card h3', '.benefit-card p',
+      '.invest-item h3', '.invest-item p',
+      '.alt-card h2', '.alt-card p',
+      '.network-content h2', '.network-content > p',
+      '.coso-list h3', '.coso-list p',
+      '.section-head h2', '.section-head p',
+      '.cta-content h2', '.cta-content p', '.cta-content li'
     ];
-    var n = 0;
     selectors.forEach(function(sel) {
       document.querySelectorAll(sel).forEach(function(el) {
-        if (el.closest('.config-modal, .password-modal, .edit-toolbar, .maintenance-overlay, .side-panel, script, style')) return;
-        if (el.getAttribute('data-cms-key')) return;
-        if (el.querySelector('i') && el.children.length === 1 && !el.textContent.trim()) return;
-        el.setAttribute('data-cms-key', 't' + (n++));
+        if (isProtected(el)) return;
+        // No pisar claves permanentes conocidas
+        var cur = el.getAttribute('data-cms-key');
+        if (cur === 'footer_manifesto' || cur === 'footer_brand' || cur === 'hero_main_photo') return;
+        el.setAttribute('data-cms-key', stableKeyFor(el));
       });
     });
-    // Todas las imágenes relevantes (excepto mensaje del departamento y logos de sistema)
-    document.querySelectorAll('img').forEach(function(img) {
-      if (img.closest('.config-modal, .password-modal, .edit-toolbar, .maintenance-overlay, .footer-signature')) return;
-      if (img.id === 'editableImage' || img.classList.contains('editable-image')) return;
-      if (img.classList.contains('maintenance-logo') || img.classList.contains('password-modal-logo') || img.classList.contains('brand-logo')) return;
-      if (img.getAttribute('data-cms-key')) return;
-      img.setAttribute('data-cms-key', 'img' + (n++));
-    });
+
+    // Hero photo: clave fija
     var hero = document.getElementById('heroMainPhoto') || document.querySelector('.hero-circle img');
     if (hero) {
       hero.setAttribute('data-cms-key', 'hero_main_photo');
       hero.id = 'heroMainPhoto';
     }
-    // Mensaje del departamento: sin clave CMS
+    // Departamento: sin clave CMS
     var dep = document.getElementById('editableImage');
     if (dep) dep.removeAttribute('data-cms-key');
     var depT = document.getElementById('editableText');
@@ -3631,7 +3737,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ensureCmsKeys();
 
     // Textos: contenteditable (evitar BUTTON nativos: la tecla espacio los "clickea")
-    var textSel = 'h1,h2,h3,p,li,.tag,.section-tag,.role,.role-sub,.feature-card h3,.feature-card p,.faq-body p,.cta-form h3,.ba-badge,.editable-text,.tl-content h3,.tl-content p,.coso-list h3,.coso-list p,.invest-item h3,.invest-item p,.benefit-card h3,.benefit-card p,.alt-card h2,.alt-card p,.network-content h2,.network-content > p,.cta-content h2,.cta-content p,.cta-content li,.section-head h2,.section-head p,.faq-header';
+    var textSel = 'h1,h2,h3,p,li,.tag,.section-tag,.role,.role-sub,.feature-card h3,.feature-card p,.faq-body p,.cta-form h3,.ba-badge,.editable-text,.tl-content h3,.tl-content p,.coso-list h3,.coso-list p,.invest-item h3,.invest-item p,.benefit-card h3,.benefit-card p,.alt-card h2,.alt-card p,.network-content h2,.network-content > p,.cta-content h2,.cta-content p,.cta-content li,.section-head h2,.section-head p,.faq-header,.footer-manifesto,.footer-brand';
     document.querySelectorAll(textSel).forEach(function(el) {
       if (el.closest('.config-modal,.password-modal,.edit-toolbar,.maintenance-overlay,.side-panel,.cms-controls')) return;
       if (!el.getAttribute('data-cms-key')) {
@@ -3752,8 +3858,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function saveEverything() {
-    // Guardado seguro: no genera claves t0/t1 que luego desordenan la página
-    var content = collectPageContent(); // solo hero_main_photo
+    var content = collectPageContent();
 
     function cleanHtml(root) {
       if (!root) return '';
@@ -3766,22 +3871,23 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.outlineOffset = '';
         el.style.cursor = '';
       });
-      clone.querySelectorAll('[data-cms-key]').forEach(function(el) {
-        el.removeAttribute('data-cms-key');
-      });
       return clone.innerHTML;
     }
 
     var heroLeft = document.querySelector('.hero-left');
     var faqList = document.querySelector('.faq-list');
-    if (heroLeft) {
-      content['__hero_left_html'] = { type: 'html', value: cleanHtml(heroLeft) };
-    }
-    if (faqList) {
-      content['__faq_list_html'] = { type: 'html', value: cleanHtml(faqList) };
-    }
+    if (heroLeft) content['__hero_left_html'] = { type: 'html', value: cleanHtml(heroLeft) };
+    if (faqList) content['__faq_list_html'] = { type: 'html', value: cleanHtml(faqList) };
 
-    // No tocar content_text ni image_base64 (mensaje del departamento)
+    // Limitar tamaño de data-URLs enormes en page_content (excepto hero comprimido)
+    Object.keys(content).forEach(function(k) {
+      var it = content[k];
+      if (it && it.type === 'img' && it.value && it.value.length > 1200000) {
+        console.warn('Imagen omitida por tamaño:', k);
+        delete content[k];
+      }
+    });
+
     return await upsertRow({
       page_content: content,
       maintenance_mode: isEditMode,
