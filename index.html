@@ -1808,6 +1808,55 @@
   }
 
 
+
+  /* ===== CONTADOR VISITAS / ANALÍTICA ===== */
+  .visit-counter-bar{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:14px 20px;margin-top:8px;
+    font-size:.78rem;font-weight:700;letter-spacing:.06em;
+    color:var(--texto-gris);
+  }
+  .visit-counter-bar i{color:var(--dorado-oscuro)}
+  .visit-counter-bar strong{color:var(--dorado-oscuro);font-size:.95rem}
+  .analytics-panel{
+    margin-top:18px;padding:18px 16px;border-radius:14px;
+    background:linear-gradient(145deg,#fafafa 0%,#f5f2e8 100%);
+    border:1px solid rgba(201,162,39,.28);
+  }
+  .analytics-panel h4{
+    font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--dorado-oscuro);margin-bottom:14px;display:flex;align-items:center;gap:8px;
+  }
+  .analytics-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  }
+  .analytics-stat{
+    background:#fff;border:1px solid var(--borde);border-radius:12px;padding:14px 12px;text-align:center;
+  }
+  .analytics-stat .as-num{
+    font-size:1.35rem;font-weight:900;color:var(--gris-oscuro);line-height:1.1;margin-bottom:4px;
+  }
+  .analytics-stat .as-label{
+    font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#888;
+  }
+  .analytics-detail{
+    margin-top:12px;font-size:.78rem;color:var(--texto-gris);line-height:1.55;
+    max-height:180px;overflow-y:auto;background:#fff;border-radius:10px;border:1px solid var(--borde);
+    padding:12px 14px;
+  }
+  .analytics-detail table{width:100%;border-collapse:collapse;font-size:.72rem}
+  .analytics-detail th,.analytics-detail td{padding:6px 4px;text-align:left;border-bottom:1px solid #eee}
+  .analytics-detail th{color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:.6rem}
+  .analytics-refresh{
+    margin-top:12px;width:100%;padding:10px;border-radius:10px;border:1px dashed rgba(201,162,39,.4);
+    background:rgba(201,162,39,.06);color:var(--dorado-oscuro);font-family:inherit;
+    font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+  }
+  .analytics-refresh:hover{background:rgba(201,162,39,.14)}
+  @media(max-width:600px){
+    .analytics-grid{grid-template-columns:1fr 1fr}
+  }
+
   /* Nunca mostrar contornos punteados fuera del modo edición */
   body:not(.cms-editing) [data-cms-key],
   body:not(.cms-editing) [contenteditable] {
@@ -2556,6 +2605,12 @@
   </div>
 </section>
 
+<!-- Contador público discreto (no altera métricas) -->
+<div class="visit-counter-bar" id="visitCounterBar">
+  <i class="fas fa-eye"></i>
+  <span>Visitas a esta página: <strong id="visitCountPublic">—</strong></span>
+</div>
+
 <footer>
   <span class="footer-brand">Departamento de Control Interno</span>
   <p class="footer-manifesto">
@@ -2678,6 +2733,42 @@
         </div>
       </div>
 
+
+      <div class="analytics-panel" id="analyticsPanel">
+        <h4><i class="fas fa-chart-line"></i> Seguimiento de visitas (solo admin)</h4>
+        <div class="analytics-grid">
+          <div class="analytics-stat">
+            <div class="as-num" id="anTotalVisits">—</div>
+            <div class="as-label">Visitas totales</div>
+          </div>
+          <div class="analytics-stat">
+            <div class="as-num" id="anUniqueDevices">—</div>
+            <div class="as-label">Dispositivos únicos</div>
+          </div>
+          <div class="analytics-stat">
+            <div class="as-num" id="anAvgPerDevice">—</div>
+            <div class="as-label">Promedio visitas / dispositivo</div>
+          </div>
+          <div class="analytics-stat">
+            <div class="as-num" id="anAvgPerDay">—</div>
+            <div class="as-label">Promedio visitas / día</div>
+          </div>
+          <div class="analytics-stat">
+            <div class="as-num" id="anToday">—</div>
+            <div class="as-label">Visitas hoy</div>
+          </div>
+          <div class="analytics-stat">
+            <div class="as-num" id="anDaysActive">—</div>
+            <div class="as-label">Días con tráfico</div>
+          </div>
+        </div>
+        <div class="analytics-detail" id="analyticsDetail">
+          <em style="color:#999">Cargando datos...</em>
+        </div>
+        <button type="button" class="analytics-refresh" id="analyticsRefresh">
+          <i class="fas fa-sync-alt"></i> Actualizar estadísticas
+        </button>
+      </div>
 
       <button type="button" class="config-full-edit-btn" id="btnFullEdit">
         <i class="fas fa-edit"></i> Editar toda la página
@@ -3229,8 +3320,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function restoreFixedMetrics() {
+    // Valores originales del diseño — no deben cambiar por CMS ni por errores de guardado
+    var fixed = [
+      { count: 5, label: 'Componentes COSO' },
+      { count: 3, label: 'Líneas de defensa' },
+      { count: 6, label: 'Procesos de Control Interno' },
+      { count: 0, label: 'Tolerancia al fraude' }
+    ];
+    var nums = document.querySelectorAll('#metricsHome .metric-num');
+    var labels = document.querySelectorAll('#metricsHome .metric-label');
+    fixed.forEach(function(item, i) {
+      if (nums[i]) {
+        nums[i].setAttribute('data-count', String(item.count));
+        nums[i].removeAttribute('data-cms-key');
+        nums[i].removeAttribute('contenteditable');
+      }
+      if (labels[i]) {
+        labels[i].textContent = item.label;
+        labels[i].removeAttribute('data-cms-key');
+        labels[i].removeAttribute('contenteditable');
+        labels[i].style.outline = '';
+      }
+    });
+
+    // Marca del navbar (fija)
+    var brandStrong = document.querySelector('.brand-text strong');
+    var brandSmall = document.querySelector('.brand-text small');
+    if (brandStrong) {
+      brandStrong.innerHTML = 'Departamento de <span class="brand-accent">Control Interno</span>';
+      brandStrong.removeAttribute('data-cms-key');
+      brandStrong.removeAttribute('contenteditable');
+      brandStrong.style.outline = '';
+    }
+    if (brandSmall) {
+      brandSmall.textContent = 'Segunda Línea de Defensa';
+      brandSmall.removeAttribute('data-cms-key');
+      brandSmall.removeAttribute('contenteditable');
+      brandSmall.style.outline = '';
+      // Eliminar nodos basura que el CMS haya inyectado dentro del brand
+      brandSmall.querySelectorAll && brandSmall.querySelectorAll('.faq-icon, button, .cms-controls').forEach(function(n){ n.remove(); });
+    }
+    var brand = document.querySelector('.brand-text');
+    if (brand) {
+      brand.querySelectorAll('.faq-icon, .faq-header, .cms-btn-add, .cms-btn-del, .cms-controls').forEach(function(n){ n.remove(); });
+      brand.querySelectorAll('[contenteditable]').forEach(function(n){
+        n.removeAttribute('contenteditable');
+        n.style.outline = '';
+      });
+    }
+    // Asegurar que controles CMS no se vean fuera de modo edición
+    if (!document.body.classList.contains('cms-editing')) {
+      document.querySelectorAll('.cms-controls').forEach(function(el){ el.style.display = 'none'; });
+      document.querySelectorAll('.cms-faq-del').forEach(function(el){ el.remove(); });
+    }
+  }
+
   function applyConfig(text, imageBase64) {
-    // SOLO "Mensaje del Departamento". Modo exclusivo: O texto O imagen (nunca ambos a la vez).
+    // Mensaje del Departamento: EXCLUSIVO — o texto o imagen (nunca ambos).
     var imgEl = document.getElementById('editableImage');
     var loadingEl = document.getElementById('editableLoading');
     if (loadingEl) loadingEl.classList.add('hidden');
@@ -3240,12 +3387,12 @@ document.addEventListener('DOMContentLoaded', () => {
     var msg = (text && String(text).trim()) ? String(text).trim() : '';
 
     if (hasImg) {
-      // Solo imagen: ocultar texto primero para no parpadear
+      // MODO IMAGEN: mostrar solo imagen; vaciar texto del DOM para que no "vuelva"
       if (editableText) {
+        editableText.textContent = '';
         editableText.classList.add('hidden');
-        // Conservar texto en el modal por si después quitan la imagen, pero no mostrar
-        if (configTextarea && msg) configTextarea.value = msg;
       }
+      if (configTextarea) configTextarea.value = '';
       if (imgEl) {
         imgEl.classList.remove('hidden');
         setImageSrcClean(imgEl, imageBase64);
@@ -3261,7 +3408,7 @@ document.addEventListener('DOMContentLoaded', () => {
       pendingImageData = imageBase64;
       removeImageFlag = false;
     } else {
-      // Solo texto
+      // MODO TEXTO: mostrar solo texto; borrar imagen del DOM
       if (imgEl) {
         imgEl.classList.add('hidden');
         setImageSrcClean(imgEl, '');
@@ -3274,78 +3421,38 @@ document.addEventListener('DOMContentLoaded', () => {
       if (configTextarea) configTextarea.value = msg;
       if (configPreview) configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
       pendingImageData = null;
+      removeImageFlag = true;
     }
   }
 
   function applyPageContent(content) {
+    // MODO SEGURO: solo aplica claves conocidas.
+    // Las claves t0/t1/auto_*/img_* del CMS antiguo CORROMPÍAN textos
+    // (marca, métricas, FAQ, etc.) al reasignarse en otro orden.
     if (!content || typeof content !== 'object') return;
-    Object.keys(content).forEach(function(key) {
-      var item = content[key];
-      if (!item) return;
-      if (key === '__hero_left_html' || key === '__faq_list_html') return;
 
-      // Foto del círculo: SOLO al elemento hero, nunca al mensaje del departamento
-      if (key === 'hero_main_photo' && item.type === 'img') {
-        var heroEl = document.getElementById('heroMainPhoto') || document.querySelector('.hero-circle img');
-        if (heroEl && item.value) {
-          heroEl.id = 'heroMainPhoto';
-          heroEl.setAttribute('data-cms-key', 'hero_main_photo');
-          heroEl.classList.remove('hidden');
-          setImageSrcClean(heroEl, item.value);
-          heroEl.style.opacity = '1';
-        }
-        return;
+    // Foto del círculo del hero (independiente del mensaje del departamento)
+    var heroItem = content['hero_main_photo'];
+    if (heroItem && heroItem.type === 'img' && heroItem.value) {
+      var heroEl = document.getElementById('heroMainPhoto') || document.querySelector('.hero-circle img');
+      if (heroEl) {
+        heroEl.id = 'heroMainPhoto';
+        heroEl.setAttribute('data-cms-key', 'hero_main_photo');
+        heroEl.classList.remove('hidden');
+        setImageSrcClean(heroEl, heroItem.value);
+        heroEl.style.opacity = '1';
       }
-
-      var el = document.querySelector('[data-cms-key="' + key + '"]');
-      if (!el) return;
-      // Proteger mensaje del departamento (imagen + texto)
-      if (el.id === 'editableImage' || el.id === 'editableText') return;
-      if (el.classList.contains('editable-image') || el.classList.contains('editable-text')) return;
-      if (el.id === 'heroMainPhoto') return; // hero ya se aplicó arriba
-      try {
-        if (item.type === 'img' && el.tagName === 'IMG') {
-          if (item.value) {
-            el.classList.remove('hidden');
-            setImageSrcClean(el, item.value);
-            el.style.opacity = '1';
-          }
-        } else if (item.type === 'html') {
-          el.innerHTML = item.value;
-        } else if (item.type === 'text') {
-          el.textContent = item.value;
-        }
-      } catch (e2) {}
-    });
+    }
+    // Cualquier otra clave t*, auto_*, img_* se IGNORA a propósito
   }
 
   function collectPageContent() {
+    // Solo persistir lo que debe sobrevivir recargas sin corromper el resto
     var content = {};
-    document.querySelectorAll('[data-cms-key]').forEach(function(el) {
-      var key = el.getAttribute('data-cms-key');
-      if (!key) return;
-      // Nunca mezclar mensaje del departamento con page_content
-      if (el.id === 'editableImage' || el.id === 'editableText' || el.classList.contains('editable-image') || el.classList.contains('editable-text')) return;
-      if (el.tagName === 'IMG') {
-        var src = el.getAttribute('src') || '';
-        if (!src || src === 'null' || src === 'undefined') return;
-        // Hero: siempre bajo la clave fija hero_main_photo
-        if (el.id === 'heroMainPhoto' || key === 'hero_main_photo') {
-          content['hero_main_photo'] = { type: 'img', value: src };
-          return;
-        }
-        content[key] = { type: 'img', value: src };
-      } else {
-        content[key] = { type: 'html', value: el.innerHTML };
-      }
-    });
-    // Garantizar hero aunque el atributo se haya perdido
-    var heroEl = document.getElementById('heroMainPhoto');
+    var heroEl = document.getElementById('heroMainPhoto') || document.querySelector('.hero-circle img');
     if (heroEl) {
       var hs = heroEl.getAttribute('src') || '';
-      if (hs && hs !== 'null' && heroEl.style.opacity !== '0') {
-        content['hero_main_photo'] = { type: 'img', value: hs };
-      } else if (hs && hs.indexOf('data:image') === 0) {
+      if (hs && hs !== 'null' && hs !== 'undefined' && hs.length > 10) {
         content['hero_main_photo'] = { type: 'img', value: hs };
       }
     }
@@ -3355,11 +3462,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function ensureCmsKeys() {
     var selectors = [
       'h1', 'h2', 'h3', 'p', 'li',
-      '.tag', '.section-tag', '.role', '.role-sub', '.metric-label',
+      '.tag', '.section-tag', '.role', '.role-sub',
+      /* BLOQUEADOS: métricas, marca del navbar, footer de firma */
       '.feature-card h3', '.feature-card p',
       '.faq-header', '.faq-body p',
-      '.brand-text strong', '.brand-text small',
-      '.footer-manifesto', '.footer-brand',
       '.cta-form h3', '.ba-badge'
     ];
     var n = 0;
@@ -3431,11 +3537,14 @@ document.addEventListener('DOMContentLoaded', () => {
       // Primero el contenido CMS de la página; al final el mensaje/imagen del home
       // para que nada del page_content borre la imagen del departamento.
       if (data.page_content) {
-        ensureCmsKeys();
         var pc = typeof data.page_content === 'string' ? JSON.parse(data.page_content) : data.page_content;
         applyPageContent(pc);
       }
+      // Siempre restaurar marca + métricas fijas después de cualquier apply
+      if (typeof restoreFixedMetrics === 'function') restoreFixedMetrics();
       applyConfig(data.content_text, data.image_base64);
+      document.body.classList.remove('cms-editing');
+      window.__ciEditMode = false;
 
       updateMaintToggleUI(!!data.maintenance_mode);
       // Solo omitir overlay si hay sesión admin abierta o modo edición activo
@@ -3462,10 +3571,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!row) return;
         if (!isEditMode) {
           if (row.page_content) {
-            ensureCmsKeys();
             var pc = typeof row.page_content === 'string' ? JSON.parse(row.page_content) : row.page_content;
             applyPageContent(pc);
           }
+          if (typeof restoreFixedMetrics === 'function') restoreFixedMetrics();
           applyConfig(row.content_text, row.image_base64);
         }
         updateMaintToggleUI(!!row.maintenance_mode);
@@ -3522,7 +3631,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ensureCmsKeys();
 
     // Textos: contenteditable (evitar BUTTON nativos: la tecla espacio los "clickea")
-    var textSel = 'h1,h2,h3,p,li,.tag,.section-tag,.role,.role-sub,.metric-label,.feature-card h3,.feature-card p,.faq-body p,.brand-text strong,.brand-text small,.footer-manifesto,.footer-brand,.cta-form h3,.ba-badge,.editable-text,.tl-content h3,.tl-content p,.coso-list h3,.coso-list p,.invest-item h3,.invest-item p,.benefit-card h3,.benefit-card p,.alt-card h2,.alt-card p,.network-content h2,.network-content > p,.cta-content h2,.cta-content p,.cta-content li,.section-head h2,.section-head p,.faq-header';
+    var textSel = 'h1,h2,h3,p,li,.tag,.section-tag,.role,.role-sub,.feature-card h3,.feature-card p,.faq-body p,.cta-form h3,.ba-badge,.editable-text,.tl-content h3,.tl-content p,.coso-list h3,.coso-list p,.invest-item h3,.invest-item p,.benefit-card h3,.benefit-card p,.alt-card h2,.alt-card p,.network-content h2,.network-content > p,.cta-content h2,.cta-content p,.cta-content li,.section-head h2,.section-head p,.faq-header';
     document.querySelectorAll(textSel).forEach(function(el) {
       if (el.closest('.config-modal,.password-modal,.edit-toolbar,.maintenance-overlay,.side-panel,.cms-controls')) return;
       if (!el.getAttribute('data-cms-key')) {
@@ -3643,27 +3752,36 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function saveEverything() {
-    ensureCmsKeys();
-    // Guardar HTML de slides y FAQ completo
+    // Guardado seguro: no genera claves t0/t1 que luego desordenan la página
+    var content = collectPageContent(); // solo hero_main_photo
+
+    function cleanHtml(root) {
+      if (!root) return '';
+      var clone = root.cloneNode(true);
+      clone.querySelectorAll('.cms-controls, .cms-faq-del, .cms-btn-add, .cms-btn-del').forEach(function(el) { el.remove(); });
+      clone.querySelectorAll('[contenteditable]').forEach(function(el) {
+        el.removeAttribute('contenteditable');
+        el.removeAttribute('spellcheck');
+        el.style.outline = '';
+        el.style.outlineOffset = '';
+        el.style.cursor = '';
+      });
+      clone.querySelectorAll('[data-cms-key]').forEach(function(el) {
+        el.removeAttribute('data-cms-key');
+      });
+      return clone.innerHTML;
+    }
+
     var heroLeft = document.querySelector('.hero-left');
     var faqList = document.querySelector('.faq-list');
-    var content = collectPageContent();
     if (heroLeft) {
-      content['__hero_left_html'] = { type: 'html', value: heroLeft.innerHTML };
+      content['__hero_left_html'] = { type: 'html', value: cleanHtml(heroLeft) };
     }
     if (faqList) {
-      content['__faq_list_html'] = { type: 'html', value: faqList.innerHTML };
+      content['__faq_list_html'] = { type: 'html', value: cleanHtml(faqList) };
     }
-    Object.keys(content).forEach(function(k) {
-      var it = content[k];
-      // Solo descartar si es absurdamente grande (compresión falló); preferir conservar
-      if (it && it.type === 'img' && it.value && it.value.length > 1200000) {
-        console.warn('Imagen CMS demasiado grande, se omite:', k, it.value.length);
-        delete content[k];
-      }
-    });
-    // No tocar content_text ni image_base64 aquí: esos campos los gestiona
-    // solo el modal "Personalizar home". Si se envían null, se borra la imagen en todos los dispositivos.
+
+    // No tocar content_text ni image_base64 (mensaje del departamento)
     return await upsertRow({
       page_content: content,
       maintenance_mode: isEditMode,
@@ -3688,30 +3806,52 @@ document.addEventListener('DOMContentLoaded', () => {
   var _origApplyPage = applyPageContent;
   applyPageContent = function(content) {
     if (!content || typeof content !== 'object') return;
+
+    // 1) Restaurar HTML de slides del hero (si existe), limpiando basura de edición
     if (content['__hero_left_html'] && content['__hero_left_html'].value) {
       var hl = document.querySelector('.hero-left');
       if (hl) {
         hl.innerHTML = content['__hero_left_html'].value;
-        currentSlide = 0;
-        // Asegurar botones agregar/eliminar slide
-        if (!document.getElementById('cmsAddSlide')) {
-          var dotsEl = hl.querySelector('.hero-dots');
-          if (dotsEl) {
-            var ctrl = document.createElement('div');
-            ctrl.className = 'cms-controls';
-            ctrl.id = 'heroCmsControls';
-            ctrl.innerHTML = '<button type="button" class="cms-btn-add" id="cmsAddSlide"><i class="fas fa-plus"></i> Agregar slide</button><button type="button" class="cms-btn-del" id="cmsDelSlide"><i class="fas fa-trash"></i> Eliminar slide actual</button>';
-            dotsEl.parentNode.insertBefore(ctrl, dotsEl.nextSibling);
-          }
+        // Limpiar atributos de modo edición que queden pegados
+        hl.querySelectorAll('[contenteditable]').forEach(function(el) {
+          el.removeAttribute('contenteditable');
+          el.style.outline = '';
+          el.style.outlineOffset = '';
+          el.style.cursor = '';
+        });
+        hl.querySelectorAll('[data-cms-key]').forEach(function(el) {
+          // conservar solo estructura visual, quitar claves sueltas
+          if (el.id !== 'heroMainPhoto') el.removeAttribute('data-cms-key');
+        });
+        hl.querySelectorAll('.cms-controls, .cms-faq-del, .cms-btn-add, .cms-btn-del').forEach(function(el) {
+          el.remove();
+        });
+        // Reinyectar controles CMS (ocultos fuera de edición)
+        var dotsEl = hl.querySelector('.hero-dots');
+        if (dotsEl && !document.getElementById('cmsAddSlide')) {
+          var ctrl = document.createElement('div');
+          ctrl.className = 'cms-controls';
+          ctrl.id = 'heroCmsControls';
+          ctrl.innerHTML = '<button type="button" class="cms-btn-add" id="cmsAddSlide"><i class="fas fa-plus"></i> Agregar slide</button><button type="button" class="cms-btn-del" id="cmsDelSlide"><i class="fas fa-trash"></i> Eliminar slide actual</button>';
+          dotsEl.parentNode.insertBefore(ctrl, dotsEl.nextSibling);
         }
-        rebuildDots();
-        goToSlide(0);
+        currentSlide = 0;
+        if (typeof rebuildDots === 'function') rebuildDots();
+        if (typeof goToSlide === 'function') goToSlide(0);
       }
     }
+
+    // 2) Restaurar FAQ (si existe), limpiando basura de edición
     if (content['__faq_list_html'] && content['__faq_list_html'].value) {
       var fl = document.querySelector('.faq-list');
       if (fl) {
         fl.innerHTML = content['__faq_list_html'].value;
+        fl.querySelectorAll('[contenteditable]').forEach(function(el) {
+          el.removeAttribute('contenteditable');
+          el.style.outline = '';
+        });
+        fl.querySelectorAll('[data-cms-key]').forEach(function(el) { el.removeAttribute('data-cms-key'); });
+        fl.querySelectorAll('.cms-faq-del, .cms-controls').forEach(function(el) { el.remove(); });
         if (!document.getElementById('cmsAddFaq')) {
           var wrap = fl.parentNode;
           var fc = document.createElement('div');
@@ -3720,9 +3860,10 @@ document.addEventListener('DOMContentLoaded', () => {
           fc.innerHTML = '<button type="button" class="cms-btn-add" id="cmsAddFaq"><i class="fas fa-plus"></i> Agregar pregunta</button>';
           wrap.insertBefore(fc, fl);
         }
-        // rebind FAQ accordion
+        // Rebind accordion
         fl.querySelectorAll('.faq-header').forEach(function(header) {
           header.addEventListener('click', function() {
+            if (window.__ciEditMode) return;
             var item = header.parentElement;
             var body = item.querySelector('.faq-body');
             var isActive = item.classList.contains('active');
@@ -3731,16 +3872,26 @@ document.addEventListener('DOMContentLoaded', () => {
               var b = other.querySelector('.faq-body');
               if (b) b.style.maxHeight = null;
             });
-            if (!isActive) {
+            if (!isActive && body) {
               item.classList.add('active');
-              if (body) body.style.maxHeight = body.scrollHeight + 'px';
+              body.style.maxHeight = body.scrollHeight + 'px';
             }
           });
         });
       }
     }
+
+    // 3) Solo foto del círculo (y nada de claves t0/t1...)
     _origApplyPage(content);
+
+    // 4) Restaurar piezas fijas del diseño
+    if (typeof restoreFixedMetrics === 'function') restoreFixedMetrics();
+    document.body.classList.remove('cms-editing');
+    document.querySelectorAll('.cms-controls').forEach(function(el) {
+      if (!document.body.classList.contains('cms-editing')) el.style.display = '';
+    });
   };
+
 
   // Clic en imágenes
   document.addEventListener('click', function(e) {
@@ -4069,15 +4220,48 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function openConfig() {
-    removeImageFlag = false;
-    pendingImageData = null;
-    configTextarea.value = editableText ? editableText.textContent.trim() : DEFAULT_TEXT;
-    if (editableImage && !editableImage.classList.contains('hidden') && editableImage.src) {
-      configPreview.innerHTML = '<img src="' + editableImage.src + '" alt="Preview">';
-      pendingImageData = editableImage.src;
-    } else {
-      configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
+    if (typeof loadAnalyticsDashboard === 'function') {
+      setTimeout(loadAnalyticsDashboard, 100);
     }
+
+    var imgEl = document.getElementById('editableImage');
+    var hasVisibleImg = !!(imgEl && !imgEl.classList.contains('hidden') && imgEl.src && imgEl.src.length > 32 && imgEl.style.opacity !== '0');
+
+    if (hasVisibleImg) {
+      // Está en modo imagen: no rellenar el texto eliminado
+      removeImageFlag = false;
+      pendingImageData = imgEl.src;
+      if (configTextarea) configTextarea.value = '';
+      if (configPreview) {
+        configPreview.innerHTML = '';
+        var p = document.createElement('img');
+        p.alt = 'Preview';
+        p.src = imgEl.src;
+        configPreview.appendChild(p);
+      }
+      // Activar pestaña Imagen
+      document.querySelectorAll('.config-tab-btn').forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-config-tab') === 'image');
+      });
+      document.querySelectorAll('.config-panel').forEach(function(p) {
+        p.classList.toggle('active', p.getAttribute('data-config-panel') === 'image');
+      });
+    } else {
+      // Modo texto
+      removeImageFlag = true;
+      pendingImageData = null;
+      var txt = (editableText && editableText.textContent.trim()) ? editableText.textContent.trim() : DEFAULT_TEXT;
+      if (configTextarea) configTextarea.value = txt;
+      if (configPreview) configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
+      if (configFileInput) configFileInput.value = '';
+      document.querySelectorAll('.config-tab-btn').forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-config-tab') === 'text');
+      });
+      document.querySelectorAll('.config-panel').forEach(function(p) {
+        p.classList.toggle('active', p.getAttribute('data-config-panel') === 'text');
+      });
+    }
+
     configModal.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -4203,6 +4387,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (configPreview) {
         configPreview.innerHTML = '<img src="' + dataUrl + '" alt="Preview">';
       }
+      // Al subir imagen, activar pestaña Imagen (modo exclusivo)
+      document.querySelectorAll('.config-tab-btn').forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-config-tab') === 'image');
+      });
+      document.querySelectorAll('.config-panel').forEach(function(p) {
+        p.classList.toggle('active', p.getAttribute('data-config-panel') === 'image');
+      });
+      // Limpiar texto del textarea para que no "vuelva" al guardar
+      if (configTextarea) configTextarea.value = '';
     } catch (err) {
       console.warn(err);
       alert('No se pudo procesar la imagen. Prueba con otro archivo.');
@@ -4214,26 +4407,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
   configSave.addEventListener('click', async function() {
     var typedText = (configTextarea && configTextarea.value) ? configTextarea.value.trim() : '';
-    var imageToSave = (pendingImageData && !removeImageFlag && pendingImageData.length > 0)
-      ? pendingImageData
-      : null;
+    var activeTabBtn = document.querySelector('.config-tab-btn.active');
+    var activeTab = activeTabBtn ? activeTabBtn.getAttribute('data-config-tab') : 'text';
+    var hasPendingImg = !!(pendingImageData && !removeImageFlag && pendingImageData.length > 32);
 
-    // Uno u otro: imagen sola está permitida (sin texto obligatorio)
-    if (!imageToSave && !typedText) {
-      alert('Escribe un mensaje o sube una imagen (solo uno de los dos se mostrará).');
+    // La pestaña activa decide el modo (exclusivo)
+    var mode = (activeTab === 'image') ? 'image' : 'text';
+
+    // Si están en pestaña imagen pero no hay foto, o en texto sin texto
+    if (mode === 'image' && !hasPendingImg) {
+      alert('Sube una imagen o cambia a la pestaña Texto para guardar un mensaje.');
+      return;
+    }
+    if (mode === 'text' && !typedText) {
+      alert('Escribe un mensaje o cambia a la pestaña Imagen para guardar una foto.');
       return;
     }
 
-    // Si hay imagen → modo imagen (texto opcional, no se muestra en el home)
-    // Si no hay imagen → modo texto (si vacío, se usa el mensaje por defecto)
-    var newText = imageToSave ? typedText : (typedText || DEFAULT_TEXT);
+    var newText;
+    var imageToSave;
+
+    if (mode === 'image') {
+      // Solo imagen: borrar texto en servidor y en pantalla
+      imageToSave = pendingImageData;
+      newText = '';
+      removeImageFlag = false;
+    } else {
+      // Solo texto: borrar imagen en servidor y en pantalla
+      imageToSave = null;
+      newText = typedText || DEFAULT_TEXT;
+      pendingImageData = null;
+      removeImageFlag = true;
+      if (configFileInput) configFileInput.value = '';
+      if (configPreview) configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
+    }
 
     var btn = configSave;
     var prevHtml = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = 'Guardando...';
     try {
-      // Aplicar en pantalla de inmediato (exclusivo texto XOR imagen)
       applyConfig(newText, imageToSave);
       var ok = await upsertRow({
         content_text: newText,
@@ -4247,7 +4460,7 @@ document.addEventListener('DOMContentLoaded', () => {
           closeConfig();
         }, 450);
       } else {
-        alert('No se pudo guardar en el servidor.\n\nPosibles causas:\n• La imagen sigue siendo muy pesada\n• Falta ejecutar el SQL en Supabase\n• Problema de conexión\n\nEl cambio se ve en esta sesión, pero puede no persistir.');
+        alert('No se pudo guardar en el servidor.\n\nPosibles causas:\n• La imagen sigue siendo muy pesada\n• Falta ejecutar el SQL en Supabase\n• Problema de conexión');
         btn.innerHTML = prevHtml;
         btn.disabled = false;
       }
@@ -4260,17 +4473,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   configClear.addEventListener('click', async function() {
-    var keepText = (configTextarea && configTextarea.value.trim())
-      ? configTextarea.value.trim()
-      : (editableText ? editableText.textContent.trim() : DEFAULT_TEXT);
-    if (!confirm('¿Quitar la imagen y mostrar el texto del mensaje?\n\nEl texto actual se conservará.')) return;
+    if (!confirm('¿Quitar la imagen y usar solo texto?\n\nLa imagen se eliminará al guardar.')) return;
     removeImageFlag = true;
     pendingImageData = null;
     if (configPreview) configPreview.innerHTML = '<div class="config-preview-empty">Sin imagen seleccionada</div>';
     if (configFileInput) configFileInput.value = '';
-    if (configTextarea) configTextarea.value = keepText || DEFAULT_TEXT;
-    applyConfig(keepText || DEFAULT_TEXT, null);
-    var ok = await upsertRow({ content_text: keepText || DEFAULT_TEXT, image_base64: null });
+    var keepText = (configTextarea && configTextarea.value.trim())
+      ? configTextarea.value.trim()
+      : DEFAULT_TEXT;
+    if (configTextarea) configTextarea.value = keepText;
+    // Activar pestaña texto
+    document.querySelectorAll('.config-tab-btn').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-config-tab') === 'text');
+    });
+    document.querySelectorAll('.config-panel').forEach(function(p) {
+      p.classList.toggle('active', p.getAttribute('data-config-panel') === 'text');
+    });
+    applyConfig(keepText, null);
+    var ok = await upsertRow({ content_text: keepText, image_base64: null });
     if (!ok) {
       alert('Se quitó la imagen en esta pantalla, pero no se pudo guardar en el servidor.');
     }
@@ -4298,7 +4518,216 @@ document.addEventListener('DOMContentLoaded', () => {
   clearCmsOutlines();
   setTimeout(clearCmsOutlines, 500);
 
-  loadConfigFromSupabase().finally(function() {
+
+  /* ============================================= */
+  /* CONTADOR DE VISITAS + ANALÍTICA DE DISPOSITIVOS */
+  /* ============================================= */
+  const VISITS_TABLE = 'page_visits';
+  const DEVICE_KEY = 'ci_device_id_v1';
+
+  function getOrCreateDeviceId() {
+    try {
+      var id = localStorage.getItem(DEVICE_KEY);
+      if (id && id.length > 8) return id;
+      id = 'dev_' + Math.random().toString(36).slice(2) + '_' + Date.now().toString(36);
+      localStorage.setItem(DEVICE_KEY, id);
+      return id;
+    } catch (e) {
+      return 'anon_' + Math.random().toString(36).slice(2, 10);
+    }
+  }
+
+  function formatNum(n) {
+    if (n === null || n === undefined || isNaN(n)) return '—';
+    return Number(n).toLocaleString('es-MX');
+  }
+
+  function formatDec(n) {
+    if (n === null || n === undefined || isNaN(n)) return '—';
+    return Number(n).toLocaleString('es-MX', { minimumFractionDigits: 1, maximumFractionDigits: 2 });
+  }
+
+  async function recordPageVisit() {
+    var deviceId = getOrCreateDeviceId();
+    var payload = {
+      device_id: deviceId,
+      visited_at: new Date().toISOString(),
+      user_agent: (navigator.userAgent || '').slice(0, 300),
+      viewport: (window.innerWidth || 0) + 'x' + (window.innerHeight || 0),
+      path: (location.pathname || '/') + (location.hash || '')
+    };
+    try {
+      var res = await supabase.from(VISITS_TABLE).insert(payload);
+      if (res.error) {
+        console.warn('Visita no registrada:', res.error.message);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.warn('Visita error:', err);
+      return false;
+    }
+  }
+
+  async function fetchTotalVisits() {
+    try {
+      var res = await supabase
+        .from(VISITS_TABLE)
+        .select('*', { count: 'exact', head: true });
+      if (res.error) {
+        console.warn('Count visitas:', res.error.message);
+        return null;
+      }
+      return res.count;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function updatePublicVisitCounter() {
+    var el = document.getElementById('visitCountPublic');
+    if (!el) return;
+    var total = await fetchTotalVisits();
+    if (total !== null && total !== undefined) {
+      el.textContent = formatNum(total);
+    } else {
+      el.textContent = '—';
+    }
+  }
+
+  async function loadAnalyticsDashboard() {
+    var detail = document.getElementById('analyticsDetail');
+    var set = function(id, val) {
+      var n = document.getElementById(id);
+      if (n) n.textContent = val;
+    };
+    set('anTotalVisits', '…');
+    set('anUniqueDevices', '…');
+    set('anAvgPerDevice', '…');
+    set('anAvgPerDay', '…');
+    set('anToday', '…');
+    set('anDaysActive', '…');
+    if (detail) detail.innerHTML = '<em style="color:#999">Cargando datos...</em>';
+
+    try {
+      // Traer visitas (límite alto para panel admin)
+      var res = await supabase
+        .from(VISITS_TABLE)
+        .select('device_id, visited_at, user_agent, viewport, path')
+        .order('visited_at', { ascending: false })
+        .limit(5000);
+
+      if (res.error) {
+        if (detail) {
+          detail.innerHTML = '<span style="color:#c62828">No se pudieron cargar las visitas.<br><small>' +
+            (res.error.message || '') +
+            '</small><br><br>Ejecuta el SQL de la tabla <code>page_visits</code> en Supabase.</span>';
+        }
+        return;
+      }
+
+      var rows = res.data || [];
+      var total = rows.length;
+      var devices = {};
+      var byDay = {};
+      var todayStr = new Date().toISOString().slice(0, 10);
+
+      rows.forEach(function(r) {
+        var d = r.device_id || 'unknown';
+        if (!devices[d]) devices[d] = { count: 0, first: r.visited_at, last: r.visited_at, ua: r.user_agent || '', viewport: r.viewport || '' };
+        devices[d].count += 1;
+        if (r.visited_at < devices[d].first) devices[d].first = r.visited_at;
+        if (r.visited_at > devices[d].last) devices[d].last = r.visited_at;
+        if (r.user_agent) devices[d].ua = r.user_agent;
+        if (r.viewport) devices[d].viewport = r.viewport;
+
+        var day = (r.visited_at || '').slice(0, 10);
+        if (day) byDay[day] = (byDay[day] || 0) + 1;
+      });
+
+      var unique = Object.keys(devices).length;
+      var daysActive = Object.keys(byDay).length;
+      var avgPerDevice = unique ? (total / unique) : 0;
+      var avgPerDay = daysActive ? (total / daysActive) : 0;
+      var todayCount = byDay[todayStr] || 0;
+
+      // Si el count exacto del head es mayor (limit 5000), usar count real
+      var countRes = await supabase.from(VISITS_TABLE).select('*', { count: 'exact', head: true });
+      if (!countRes.error && countRes.count !== null && countRes.count > total) {
+        total = countRes.count;
+        avgPerDevice = unique ? (total / unique) : 0;
+        avgPerDay = daysActive ? (total / daysActive) : 0;
+      }
+
+      set('anTotalVisits', formatNum(total));
+      set('anUniqueDevices', formatNum(unique));
+      set('anAvgPerDevice', formatDec(avgPerDevice));
+      set('anAvgPerDay', formatDec(avgPerDay));
+      set('anToday', formatNum(todayCount));
+      set('anDaysActive', formatNum(daysActive));
+
+      // Tabla top dispositivos
+      var deviceList = Object.keys(devices).map(function(id) {
+        return { id: id, count: devices[id].count, first: devices[id].first, last: devices[id].last, ua: devices[id].ua, viewport: devices[id].viewport };
+      }).sort(function(a, b) { return b.count - a.count; });
+
+      var dayList = Object.keys(byDay).sort().reverse().slice(0, 14).map(function(d) {
+        return { day: d, count: byDay[d] };
+      });
+
+      var html = '';
+      html += '<strong style="color:#333">Últimos 14 días</strong>';
+      html += '<table><thead><tr><th>Fecha</th><th>Visitas</th></tr></thead><tbody>';
+      if (!dayList.length) {
+        html += '<tr><td colspan="2">Sin datos aún</td></tr>';
+      } else {
+        dayList.forEach(function(d) {
+          html += '<tr><td>' + d.day + '</td><td><strong>' + d.count + '</strong></td></tr>';
+        });
+      }
+      html += '</tbody></table>';
+
+      html += '<br><strong style="color:#333">Dispositivos (top 20)</strong>';
+      html += '<table><thead><tr><th>#</th><th>ID</th><th>Visitas</th><th>Primera</th><th>Última</th><th>Pantalla</th></tr></thead><tbody>';
+      deviceList.slice(0, 20).forEach(function(d, i) {
+        var shortId = d.id.length > 18 ? d.id.slice(0, 16) + '…' : d.id;
+        var first = (d.first || '').slice(0, 16).replace('T', ' ');
+        var last = (d.last || '').slice(0, 16).replace('T', ' ');
+        html += '<tr><td>' + (i + 1) + '</td><td title="' + d.id + '">' + shortId + '</td><td><strong>' + d.count + '</strong></td><td>' + first + '</td><td>' + last + '</td><td>' + (d.viewport || '—') + '</td></tr>';
+      });
+      html += '</tbody></table>';
+
+      if (detail) detail.innerHTML = html;
+
+      // Sincronizar contador público
+      var pub = document.getElementById('visitCountPublic');
+      if (pub) pub.textContent = formatNum(total);
+    } catch (err) {
+      console.warn(err);
+      if (detail) detail.innerHTML = '<span style="color:#c62828">Error al cargar analítica.</span>';
+    }
+  }
+
+  // Registrar visita (una vez por carga de página) y actualizar contador
+  if (typeof restoreFixedMetrics === 'function') restoreFixedMetrics();
+
+  (async function initVisits() {
+    await recordPageVisit();
+    await updatePublicVisitCounter();
+  })();
+
+  // Al abrir el panel de configuración, cargar analítica
+  var _origOpenConfig = typeof openConfig === 'function' ? openConfig : null;
+  // openConfig se define más arriba; enganchamos al final tras su definición con listener extra
+  var analyticsRefreshBtn = document.getElementById('analyticsRefresh');
+  if (analyticsRefreshBtn) {
+    analyticsRefreshBtn.addEventListener('click', function() {
+      loadAnalyticsDashboard();
+    });
+  }
+
+
+    loadConfigFromSupabase().finally(function() {
     // Si tras cargar sigue todo oculto, mostrar texto por defecto
     var t = document.getElementById('editableText');
     var img = document.getElementById('editableImage');
